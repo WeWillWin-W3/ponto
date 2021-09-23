@@ -1,0 +1,103 @@
+table Employee {
+  id int [pk]
+  name varchar [not null]
+  user int [not null, ref: > User.id]
+  company int [not null, ref: > Company.id]
+}
+
+table Attendance {
+  id int [pk]
+  time timestamp [not null]
+  description varchar
+  employee int [not null, ref: > Employee.id]
+}
+
+table AttendanceCorrectionRequest {
+  id int [pk]
+  time timestamp
+  attendance int [ref: > Attendance.id]
+  attester int [ref: > User.id]
+  accepted boolean
+  description varchar
+}
+
+table OvertimeWorkApproval {
+  id int [pk]
+  start timestamp [not null]
+  end timestamp [not null]
+  approver int [not null, ref: > User.id]
+}
+
+table ManagerAttendanceSubmission {
+  attendance int [pk, ref: > Attendance.id]
+  manager int [pk, ref: > User.id]
+}
+
+table Company {
+  id int [pk]
+  name varchar [not null]
+}
+
+table User {
+  id int [pk]
+  username varchar [not null]
+  password varchar [not null]
+  user_role user_role [not null]
+}
+
+table WorkScheduleEmployee {
+  work_schedule int [pk, ref: > WorkSchedule.id]
+  employee int [pk, ref: > Employee.id]
+}
+
+table WorkSchedule {
+  id int [pk]
+  description varchar
+  workable boolean [not null]
+}
+
+table WorkScheduleTimeRange {
+  work_schedule int [pk, ref: > WorkSchedule.id]
+  time_range int [pk, ref: > TimeRange.id]
+  repeat_days bit(7) [not null]
+}
+
+table TimeRange {
+  id int [pk]
+  start time [not null]
+  end time [not null]
+}
+
+table QRCode {
+  qrcode_generator int [pk, ref: > QRCodeGenerator.id]
+  attendance_validator int [pk, ref: - AttendanceValidator.id]
+  public_key varchar [not null]
+  created_at timestamp [not null]
+}
+
+table QRCodeGenerator {
+  id int [pk]
+  name varchar
+  private_key varchar [not null]
+}
+
+table AttendanceValidatorAttendance {
+  attendance_validator int [pk, ref: > AttendanceValidator.id]
+  attendence int [pk, ref: > Attendance.id]
+}
+
+table AttendanceValidator {
+  id int [pk]
+  name varchar
+  type attendance_validator_type [not null]
+}
+
+enum user_role {
+    basic 
+    manager
+    admin
+}
+
+enum attendance_validator_type {
+    QRCode 
+}

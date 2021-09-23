@@ -1,0 +1,749 @@
+openapi: 3.0.3
+info:
+  description: |
+    ## Visão geral
+
+    Só os brabos on
+  version: 1.0.0
+  title: W3 Ponto
+  contact:
+    name: "Support"
+    email: suporte@w3.com
+  license:
+    name: MIT
+    url: "https://opensource.org/licenses/MIT"
+servers:
+  - url: http://{ip_dns}:{port}/v1
+    description: Servidor de produção
+    variables:
+      ip_dns:
+        enum:
+          - "177.93.109.159"
+          - "192.168.100.20"
+          - "localhost"
+        default: "localhost"
+      port:
+        enum:
+          - "3000"
+          - "80"
+        default: "3000"
+tags:
+  - name: user
+  - name: company
+  - name: attendance
+  - name: employee
+paths:
+  /user:
+    get:
+      operationId: "getUsers"
+      tags:
+        - "user"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    post:
+      operationId: "createUser"
+      tags:
+        - "user"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+  /user/{id}:
+    get:
+      operationId: "getUser"
+      tags:
+        - "user"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    put:
+      operationId: "updateUser"
+      tags:
+        - "user"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    delete:
+      operationId: "deleteUser"
+      tags:
+        - "user"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+  /company:
+    get:
+      operationId: "getCompanies"
+      tags:
+        - "company"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    post:
+      operationId: "createCompany"
+      tags:
+        - "company"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+  /company/{id}:
+    get:
+      operationId: "getCompany"
+      tags:
+        - "company"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    put:
+      operationId: "updateCompany"
+      tags:
+        - "company"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    delete:
+      operationId: "deleteCompany"
+      tags:
+        - "company"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+  /employee:
+    get:
+      operationId: "getEmployees"
+      tags:
+        - "employee"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    post:
+      operationId: "createEmployee"
+      tags:
+        - "employee"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+  /employee/{id}:
+    get:
+      operationId: "getEmployee"
+      tags:
+        - "employee"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    put:
+      operationId: "updateEmployee"
+      tags:
+        - "employee"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    delete:
+      operationId: "deleteEmployee"
+      tags:
+        - "employee"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+  /attendance:
+    get:
+      operationId: "getAttendances"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    post:
+      operationId: "createAttendance"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+  /attendance/{id}:
+    get:
+      operationId: "getAttendance"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    put:
+      operationId: "updateAttendance"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    delete:
+      operationId: "deleteAttendance"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+  /attendance/validator:
+    get:
+      operationId: "getAttendanceValidators"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    post:
+      operationId: "createAttendanceValidator"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+  /attendance/validator/{id}:
+    get:
+      operationId: "getAttendanceValidator"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    put:
+      operationId: "updateAttendanceValidator"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    delete:
+      operationId: "deleteAttendanceValidator"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+  /workschedule:
+    get:
+      operationId: "getWorkSchedules"
+      tags:
+        - "workschedule"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    post:
+      operationId: "createWorkSchedule"
+      tags:
+        - "workschedule"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+  /workschedule/{id}:
+    get:
+      operationId: "getWorkSchedule"
+      tags:
+        - "workschedule"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    put:
+      operationId: "updateWorkSchedule"
+      tags:
+        - "workschedule"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    delete:
+      operationId: "deleteWorkSchedule"
+      tags:
+        - "workschedule"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+  /overtimework:
+    get:
+      operationId: "getOvertimeWork"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+  /overtimework/approve:
+    get:
+      operationId: "getOvertimeWorkApprovals"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    post:
+      operationId: "createOvertimeWorkApproval"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+  /overtimework/approve/{id}:
+    get:
+      operationId: "getOvertimeWorkApproval"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    put:
+      operationId: "updateOvertimeWorkApproval"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+    delete:
+      operationId: "deleteOvertimeWorkApproval"
+      tags:
+        - "attendance"
+      summary: ""
+      description: ""
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Mensagem de texto"
+          required: true
+          schema:
+            type: "string"
+            example: "mensagem"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: "mensagem"
+components:
+  schemas:
+    Company:
+      type: object
+      description: ""
+    Attendance:
+      type: object
+      description: ""
+    Employee:
+      type: object
+      description: ""
+    AttendanceValidator:
+      type: object
+      description: ""
+    User:
+      type: object
+      description: ""
+    WorkSchedule:
+      type: object
+      description: ""
+  securitySchemes:
+    defaultAuth:
+      description: ""
+      type: "http"
+      scheme: "basic"
+security:
+  - defaultAuth: []
