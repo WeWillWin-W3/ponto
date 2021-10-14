@@ -2,7 +2,6 @@ import { PrismaService } from './prisma.service';
 import { Inject, Injectable } from '@nestjs/common';
 import { GenericRepository } from 'src/core/data-providers/generic.repository';
 
-
 @Injectable()
 export class PrismaGenericRepository<T>
   implements GenericRepository<T>
@@ -12,27 +11,27 @@ export class PrismaGenericRepository<T>
         @Inject('entityName') private entityName: string
     ) {}
 
-    private get entityDelagate() {
+    private get entityDelegate() {
         return this.prisma[this.entityName]
     } 
     
     async getAll(): Promise<T[]> {
-        return this.entityDelagate.findMany()
+        return this.entityDelegate.findMany()
     }
 
     async getOne(query: Partial<T>): Promise<T> {
-        return this.entityDelagate.findFirst({ where: query })
+        return this.entityDelegate.findFirst({ where: query })
     }
 
     async updateOne(query: Partial<T>, data: Partial<T>): Promise<T> {
-        return this.entityDelagate.update({ where: query, data })
+        return this.entityDelegate.update({ where: query, data })
     }
 
     async deleteOne(query: Partial<T>): Promise<T> {
-        return this.entityDelagate.delete({ where: query })
+        return this.entityDelegate.delete({ where: query })
     }
 
     async create(data: Partial<T>): Promise<T> {
-        return this.entityDelagate.create({ data })
+        return this.entityDelegate.create({ data })
     }
 }
