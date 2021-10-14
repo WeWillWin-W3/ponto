@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ExampleModule } from './entrypoint/example/example.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { PrismaService } from '../data-providers/prisma.service';
+import { ExampleModule } from './entrypoint/employee/employee.module';
 
 @Module({
   imports: [

@@ -13,8 +13,8 @@ services:
       POSTGRES_DB: ponto
     volumes:
       - "postgres_data:/var/lib/postgresql/data"
-      - "./database/sql:/docker-entrypoint-initdb.d/sql"
-      - "./database/setup.sh:/docker-entrypoint-initdb.d/setup.sh"
+      - "./database/sql:/docker-entrypoint-initdb.d/sql:z"
+      - "./database/setup.sh:/docker-entrypoint-initdb.d/setup.sh:z"
 
   pgadmin:
     container_name: ponto-pgadmin

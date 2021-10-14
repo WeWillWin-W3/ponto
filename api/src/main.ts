@@ -7,10 +7,10 @@ import { NotFoundExceptionFilter } from './framework/config/exceptions/not-found
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(
-    new DefaultExceptionFilter(),
-    new NotFoundExceptionFilter(),
-  );
+  // app.useGlobalFilters(
+  //   new DefaultExceptionFilter(),
+  //   new NotFoundExceptionFilter(),
+  // );
   await app.listen(3000);
 }
 
