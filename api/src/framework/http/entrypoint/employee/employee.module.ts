@@ -37,4 +37,4 @@ const EmployeeController = generateCrudController<
     { provide: 'employeeRepository', useClass: PrismaGenericRepository }
   ]
 })
-export class ExampleModule {}
+export class EmployeeModule {}
