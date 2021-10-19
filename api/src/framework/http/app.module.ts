@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { EmployeeModule } from './entrypoint/employee/employee.module';
+import { CrudModule } from './modules/crud/crud.module';
 
 @Module({
   imports: [
-    EmployeeModule,
-  ],
+    CrudModule,
+  ]
 })
 export class AppModule {}
