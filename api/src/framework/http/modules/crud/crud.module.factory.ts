@@ -1,3 +1,4 @@
+import { Prisma } from '.prisma/client';
 import { Type, Module } from '@nestjs/common';
 import { GenericRepository } from 'src/core/data-providers/generic.repository';
 import { PrismaGenericRepositoryFactory } from 'src/framework/data-providers/generic.prisma.repository';
@@ -21,12 +22,13 @@ export type CrudModuleFactoryProps<T, C, U> = Omit<
   CrudControllerFactoryProps<T, C, U>,
   'repositoryName'
 > & {
-  entityName: string;
+  entityName: Prisma.ModelName;
 };
 
 export const CrudModuleController = <T, C, U>({
   route,
   primaryKey,
+  primaryKeyTransformer,
   entityName,
   CreateDto,
   UpdateDto,
@@ -34,6 +36,7 @@ export const CrudModuleController = <T, C, U>({
   controller: CrudControllerFactory<T, C, U>({
     route,
     primaryKey,
+    primaryKeyTransformer,
     repositoryName: `${entityName}Repository`,
     CreateDto,
     UpdateDto,

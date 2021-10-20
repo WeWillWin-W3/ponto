@@ -32,6 +32,16 @@ export const mapRight = <L, R, S>(
 ): Either<L, S> => (isRight(either) ? right(fn(either.value)) : either);
 
 export const mapLeft = <L, R, M>(
-    either: Either<L, R>,
+  either: Either<L, R>,
   fn: (e: L) => M,
 ): Either<M, R> => (isLeft(either) ? left(fn(either.value)) : either);
+
+export const fromPromise = async <T>(
+  promise: Promise<T>,
+): Promise<Either<Error, T>> => {
+  try {
+    return right(await promise);
+  } catch (err) {
+    return left(err);
+  }
+};

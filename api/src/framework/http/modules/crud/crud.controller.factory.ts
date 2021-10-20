@@ -8,17 +8,23 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { Type as NestType } from '@nestjs/common/interfaces';
+import {
+  ArgumentMetadata,
+  PipeTransform,
+  Type as NestType,
+} from '@nestjs/common/interfaces';
 import { GenericRepository } from 'src/core/data-providers/generic.repository';
 import { ClassType } from 'src/core/logic/ClassType';
+
+type PrimaryKeyTransformerFn<T, K extends keyof T & string> = (
+  primaryKey: K,
+) => T[K];
 
 export type CrudControllerFactoryProps<T, C, U> = {
   route: string;
   primaryKey: keyof T & string;
   repositoryName: string;
-  primaryKeyTransformer?: (
-    primaryKey: CrudControllerFactoryProps<T, C, U>['primaryKey'],
-  ) => T[typeof primaryKey];
+  primaryKeyTransformer?: PrimaryKeyTransformerFn<T, keyof T & string>;
   CreateDto: ClassType<C>;
   UpdateDto: ClassType<U>;
 };
@@ -26,11 +32,15 @@ export type CrudControllerFactoryProps<T, C, U> = {
 export function CrudControllerFactory<T, C, U>({
   route,
   primaryKey,
+  primaryKeyTransformer,
   repositoryName,
   CreateDto,
   UpdateDto,
 }: CrudControllerFactoryProps<T, C, U>): NestType<any> {
   const primaryKeyRoute = `/:${primaryKey}`;
+  const primaryKeyParamPipes = primaryKeyTransformer
+    ? [PrimaryKeyTransformerPipe(primaryKeyTransformer)]
+    : [];
 
   @Controller(route)
   class CrudController {
@@ -45,8 +55,12 @@ export function CrudControllerFactory<T, C, U>({
     }
 
     @Get(primaryKeyRoute)
-    getOne(@Param(primaryKey) pk: T[typeof primaryKey]) {
-      return this.genericRepository.getOne({ [primaryKey]: pk } as Partial<T>);
+    async getOne(
+      @Param(primaryKey, ...primaryKeyParamPipes)
+      pk: T[typeof primaryKey],
+    ) {
+      const query = { [primaryKey]: pk } as Partial<T>;
+      return this.genericRepository.getOne(query);
     }
 
     @Get()
@@ -55,21 +69,37 @@ export function CrudControllerFactory<T, C, U>({
     }
 
     @Delete(primaryKeyRoute)
-    deleteOne(@Param(primaryKey) pk: T[typeof primaryKey]) {
-      return this.genericRepository.deleteOne({
-        [primaryKey]: pk,
-      } as Partial<T>);
+    deleteOne(
+      @Param(primaryKey, ...primaryKeyParamPipes)
+      pk: T[typeof primaryKey],
+    ) {
+      const query = { [primaryKey]: pk } as Partial<T>;
+      return this.genericRepository.deleteOne(query);
     }
 
     @Put(primaryKeyRoute)
     @Reflect.metadata('design:paramtypes', [String, UpdateDto])
-    update(@Param(primaryKey) pk: T[typeof primaryKey], @Body() updateDto: U) {
-      return this.genericRepository.updateOne(
-        { [primaryKey]: pk } as Partial<T>,
-        updateDto,
-      );
+    update(
+      @Param(primaryKey, ...primaryKeyParamPipes)
+      pk: T[typeof primaryKey],
+      @Body() updateDto: U,
+    ) {
+      const query = { [primaryKey]: pk } as Partial<T>;
+      return this.genericRepository.updateOne(query, updateDto);
     }
   }
 
   return CrudController;
 }
+
+const PrimaryKeyTransformerPipe = <T>(
+  fn: PrimaryKeyTransformerFn<T, keyof T & string>,
+): PipeTransform => ({
+  transform(value: any, _metadata: ArgumentMetadata) {
+    return fn(value);
+  },
+});
+
+export const numberTransformer: PrimaryKeyTransformerFn<any, string> = (
+  primaryKey: string,
+) => Number(primaryKey);

@@ -1,3 +1,4 @@
+import { numberTransformer } from './crud.controller.factory';
 import { CrudModuleController, CrudModuleFactory } from './crud.module.factory';
 import {
   CreateAttendanceDto,
@@ -9,14 +10,16 @@ export const CrudModule = CrudModuleFactory([
   CrudModuleController({
     route: '/employees',
     primaryKey: 'id',
-    entityName: 'employee',
+    primaryKeyTransformer: numberTransformer,
+    entityName: 'Employee',
     CreateDto: CreateEmployeeDto,
     UpdateDto: CreateEmployeeDto,
   }),
   CrudModuleController({
     route: '/attendances',
     primaryKey: 'id',
-    entityName: 'attendance',
+    primaryKeyTransformer: numberTransformer,
+    entityName: 'Attendance',
     CreateDto: CreateAttendanceDto,
     UpdateDto: UpdateAttendanceDto,
   }),
