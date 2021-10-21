@@ -4,7 +4,7 @@ import {
   CreateAttendanceDto,
   UpdateAttendanceDto,
 } from './dtos/attendance.dto';
-import { CreateEmployeeDto } from './dtos/employee.dto';
+import { CreateEmployeeDto, UpdateEmployeeDto } from './dtos/employee.dto';
 
 export const CrudModule = CrudModuleFactory([
   CrudModuleController({
@@ -13,13 +13,50 @@ export const CrudModule = CrudModuleFactory([
     primaryKeyTransformer: numberTransformer,
     entityName: 'Employee',
     CreateDto: CreateEmployeeDto,
-    UpdateDto: CreateEmployeeDto,
+    UpdateDto: UpdateEmployeeDto,
+  }),
+  CrudModuleController({
+    route: '/users',
+    primaryKey: 'id',
+    primaryKeyTransformer: numberTransformer,
+    entityName: 'User',
+    CreateDto: CreateEmployeeDto,
+    UpdateDto: UpdateEmployeeDto,
+    customActions: {
+      create: (deps) => async (req, res) => {
+        return res.json({ message: 'Aqui vai um useCase customizado' });
+      },
+    },
   }),
   CrudModuleController({
     route: '/attendances',
     primaryKey: 'id',
     primaryKeyTransformer: numberTransformer,
     entityName: 'Attendance',
+    CreateDto: CreateAttendanceDto,
+    UpdateDto: UpdateAttendanceDto,
+  }),
+  CrudModuleController({
+    route: '/companies',
+    primaryKey: 'id',
+    primaryKeyTransformer: numberTransformer,
+    entityName: 'Company',
+    CreateDto: CreateAttendanceDto,
+    UpdateDto: UpdateAttendanceDto,
+  }),
+  CrudModuleController({
+    route: '/overtimework/approve',
+    primaryKey: 'id',
+    primaryKeyTransformer: numberTransformer,
+    entityName: 'OvertimeWorkApproval',
+    CreateDto: CreateAttendanceDto,
+    UpdateDto: UpdateAttendanceDto,
+  }),
+  CrudModuleController({
+    route: '/workschedule',
+    primaryKey: 'id',
+    primaryKeyTransformer: numberTransformer,
+    entityName: 'WorkSchedule',
     CreateDto: CreateAttendanceDto,
     UpdateDto: UpdateAttendanceDto,
   }),

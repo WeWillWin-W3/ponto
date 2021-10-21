@@ -32,6 +32,7 @@ export const CrudModuleController = <T, C, U>({
   entityName,
   CreateDto,
   UpdateDto,
+  customActions,
 }: CrudModuleFactoryProps<T, C, U>): CrudModuleControllerWithDeps => ({
   controller: CrudControllerFactory<T, C, U>({
     route,
@@ -40,6 +41,7 @@ export const CrudModuleController = <T, C, U>({
     repositoryName: `${entityName}Repository`,
     CreateDto,
     UpdateDto,
+    customActions,
   }),
   repository: {
     provide: `${entityName}Repository`,
