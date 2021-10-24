@@ -1,8 +1,12 @@
 import { PrismaService } from './prisma.service';
 import { Injectable } from '@nestjs/common';
-import { GenericRepository } from 'src/core/data-providers/generic.repository';
+import {
+  GenericRepository,
+  RepositoryError,
+} from 'src/core/data-providers/generic.repository';
 import { ClassType } from 'src/core/logic/ClassType';
 import { Prisma } from '.prisma/client';
+import { Either, fromPromise } from 'src/core/logic/Either';
 
 export function PrismaGenericRepositoryFactory<T>(
   entityName: Prisma.ModelName,
@@ -16,24 +20,27 @@ export function PrismaGenericRepositoryFactory<T>(
       return this.prisma[prismaDelegateName];
     }
 
-    async getAll(): Promise<T[]> {
-      return this.entityDelegate.findMany();
+    async getAll(): Promise<Either<RepositoryError, T[]>> {
+      return fromPromise(this.entityDelegate.findMany());
     }
 
-    async getOne(query: Partial<T>): Promise<T> {
-      return this.entityDelegate.findFirst({ where: query });
+    async getOne(query: Partial<T>): Promise<Either<RepositoryError, T>> {
+      return fromPromise(this.entityDelegate.findFirst({ where: query }));
     }
 
-    async updateOne(query: Partial<T>, data: Partial<T>): Promise<T> {
-      return this.entityDelegate.update({ where: query, data });
+    async updateOne(
+      query: Partial<T>,
+      data: Partial<T>,
+    ): Promise<Either<RepositoryError, T>> {
+      return fromPromise(this.entityDelegate.update({ where: query, data }));
     }
 
-    async deleteOne(query: Partial<T>): Promise<T> {
-      return this.entityDelegate.delete({ where: query });
+    async deleteOne(query: Partial<T>): Promise<Either<RepositoryError, T>> {
+      return fromPromise(this.entityDelegate.delete({ where: query }));
     }
 
-    async create(data: Partial<T>): Promise<T> {
-      return this.entityDelegate.create({ data });
+    async create(data: Partial<T>): Promise<Either<RepositoryError, T>> {
+      return fromPromise(this.entityDelegate.create({ data }));
     }
   }
 

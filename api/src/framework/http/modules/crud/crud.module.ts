@@ -27,6 +27,9 @@ export const CrudModule = CrudModuleFactory([
         return res.json({ message: 'Aqui vai um useCase customizado' });
       },
     },
+    authorizationLevel: {
+      getAll: 'admin',
+    },
   }),
   CrudModuleController({
     route: '/attendances',

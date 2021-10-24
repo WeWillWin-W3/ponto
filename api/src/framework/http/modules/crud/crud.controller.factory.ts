@@ -18,6 +18,12 @@ import {
 import { GenericRepository } from 'src/core/data-providers/generic.repository';
 import { ClassType } from 'src/core/logic/ClassType';
 import { Request, Response } from 'express';
+import {
+  User,
+  UserRolePriority,
+} from '../../middlewares/authenticate.middleware';
+import { PartialRecord } from 'src/application/entities/util';
+import { user_role, User as UserModel } from '.prisma/client';
 
 type PrimaryKeyTransformerFn<T, K extends keyof T & string> = (
   primaryKey: K,
@@ -53,6 +59,8 @@ type CustomActions<T> = Partial<
   }
 >;
 
+type ActionsAuthorizationLevel = PartialRecord<CrudControllerAction, user_role>;
+
 export type CrudControllerFactoryProps<T, C, U> = {
   route: string;
   primaryKey: keyof T & string;
@@ -61,6 +69,7 @@ export type CrudControllerFactoryProps<T, C, U> = {
   CreateDto: ClassType<C>;
   UpdateDto: ClassType<U>;
   customActions?: CustomActions<T>;
+  authorizationLevel?: ActionsAuthorizationLevel;
 };
 
 export function CrudControllerFactory<T, C, U>({
@@ -71,6 +80,7 @@ export function CrudControllerFactory<T, C, U>({
   CreateDto,
   UpdateDto,
   customActions,
+  authorizationLevel,
 }: CrudControllerFactoryProps<T, C, U>): NestType<any> {
   const primaryKeyRoute = `/:${primaryKey}`;
   const primaryKeyParamPipes = primaryKeyTransformer
@@ -80,18 +90,26 @@ export function CrudControllerFactory<T, C, U>({
   let controllerDependencies: {
     genericRepository: GenericRepository<T>;
   };
+
+  const hasAuthorization = (action: CrudControllerAction, user: UserModel) =>
+    authorizationLevel?.[action]
+      ? UserRolePriority[user.user_role] >=
+        UserRolePriority[authorizationLevel[action]]
+      : true;
+
   @Controller(route)
   class CrudController {
     constructor(
-      @Inject(repositoryName) public genericRepository: GenericRepository<T>,
+      @Inject(repositoryName) private genericRepository: GenericRepository<T>,
     ) {
       controllerDependencies = { genericRepository };
     }
 
     @Post()
     @SetParamTypes(CreateDto)
-    create(@Body() createDto: C) {
-      return this.genericRepository.create(createDto);
+    async create(@Body() createDto: C) {
+      const result = await this.genericRepository.create(createDto);
+      return result.value;
     }
 
     @Get(primaryKeyRoute)
@@ -100,32 +118,37 @@ export function CrudControllerFactory<T, C, U>({
       pk: T[typeof primaryKey],
     ) {
       const query = { [primaryKey]: pk } as Partial<T>;
-      return this.genericRepository.getOne(query);
+      const result = await this.genericRepository.getOne(query);
+      return result.value;
     }
 
     @Get()
-    getAll() {
-      return this.genericRepository.getAll();
+    async getAll(@User() user: UserModel) {
+      console.log(hasAuthorization('getAll', user));
+      const result = await this.genericRepository.getAll();
+      return result.value;
     }
 
     @Delete(primaryKeyRoute)
-    deleteOne(
+    async deleteOne(
       @Param(primaryKey, ...primaryKeyParamPipes)
       pk: T[typeof primaryKey],
     ) {
       const query = { [primaryKey]: pk } as Partial<T>;
-      return this.genericRepository.deleteOne(query);
+      const result = await this.genericRepository.deleteOne(query);
+      return result.value;
     }
 
     @Put(primaryKeyRoute)
     @SetParamTypes(String, UpdateDto)
-    update(
+    async update(
       @Param(primaryKey, ...primaryKeyParamPipes)
       pk: T[typeof primaryKey],
       @Body() updateDto: U,
     ) {
       const query = { [primaryKey]: pk } as Partial<T>;
-      return this.genericRepository.updateOne(query, updateDto);
+      const result = await this.genericRepository.updateOne(query, updateDto);
+      return result.value;
     }
   }
 
