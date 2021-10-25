@@ -2,9 +2,9 @@ import { User } from '@prisma/client';
 import { Module } from '@nestjs/common';
 import { MockGenericRepository } from 'src/framework/data-providers/generic.mock.repository';
 import { PrismaGenericRepositoryFactory } from 'src/framework/data-providers/generic.prisma.repository';
-import { Token } from '../../middlewares/authenticate.middleware';
 import { LoginController } from './login.controller';
 import { PrismaService } from 'src/framework/data-providers/prisma.service';
+import { AuthToken } from 'src/core/entities/AuthToken';
 
 @Module({
   imports: [],
@@ -17,7 +17,7 @@ import { PrismaService } from 'src/framework/data-providers/prisma.service';
     },
     {
       provide: 'TokenRepository',
-      useValue: new MockGenericRepository<Token>('token'),
+      useValue: new MockGenericRepository<AuthToken>('token'),
     },
   ],
 })

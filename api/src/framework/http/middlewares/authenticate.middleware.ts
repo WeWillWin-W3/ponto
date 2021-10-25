@@ -9,11 +9,7 @@ import {
 import { Request, Response, NextFunction } from 'express';
 import { GenericRepository } from 'src/core/data-providers/generic.repository';
 import { isLeft } from 'src/core/logic/Either';
-
-export interface Token {
-  jwt: string;
-  user: UserModel;
-}
+import { AuthToken } from 'src/core/entities/AuthToken';
 
 export const UserRolePriority: Record<user_role, number> = {
   admin: 2,
@@ -25,7 +21,7 @@ export const UserRolePriority: Record<user_role, number> = {
 export class AuthenticateMiddleware implements NestMiddleware {
   constructor(
     @Inject('TokenRepository')
-    private tokenRepository: GenericRepository<Token>,
+    private tokenRepository: GenericRepository<AuthToken>,
     @Inject('UserRepository')
     private userRepository: GenericRepository<UserModel>,
   ) {}
@@ -38,14 +34,14 @@ export class AuthenticateMiddleware implements NestMiddleware {
       return next();
     }
 
-    const tokenOrError = await this.tokenRepository.getOne({ jwt: token });
+    const tokenOrError = await this.tokenRepository.getOne({ jwtId: token });
 
     if (isLeft(tokenOrError)) {
       return res.json({ error: 'Invalid token', message: 'Invalid token' });
     }
 
     const userOrError = await this.userRepository.getOne({
-      id: tokenOrError.value.user.id,
+      id: tokenOrError.value.subject,
     });
 
     if (isLeft(userOrError)) {

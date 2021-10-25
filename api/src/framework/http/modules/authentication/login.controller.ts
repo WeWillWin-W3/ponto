@@ -3,8 +3,8 @@ import { User } from '@prisma/client';
 import { IsString } from 'class-validator';
 import { GenericRepository } from 'src/core/data-providers/generic.repository';
 import { isLeft, mapLeft } from 'src/core/logic/Either';
-import { Token } from '../../middlewares/authenticate.middleware';
-import { randomUUID } from 'crypto';
+import { GenerateAuthTokenUseCase } from 'src/core/usecases/generateauthtoken.usecase';
+import { AuthToken } from 'src/core/entities/AuthToken';
 
 class LoginDTO {
   @IsString()
@@ -19,7 +19,7 @@ export class LoginController {
   constructor(
     @Inject('UserRepository') private userRepository: GenericRepository<User>,
     @Inject('TokenRepository')
-    private tokenRepository: GenericRepository<Token>,
+    private tokenRepository: GenericRepository<AuthToken>,
   ) {}
 
   @Post()
@@ -38,12 +38,11 @@ export class LoginController {
       return { message: 'Wrong password' };
     }
 
-    // TODO: token generation
+    // TODO: Use case injection
+    const token = GenerateAuthTokenUseCase({})({ user: userOrError.value });
+
     // TODO: specific tokenRepository
-    const tokenOrError = await this.tokenRepository.create({
-      jwt: randomUUID(),
-      user: userOrError.value,
-    });
+    const tokenOrError = await this.tokenRepository.create(token);
 
     const tokenOrErrorMessage = mapLeft(tokenOrError, (err) => ({
       message: `Cannot create token: ${err.message}`,
