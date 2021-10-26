@@ -4,7 +4,7 @@ import { MockGenericRepository } from 'src/framework/data-providers/generic.mock
 import { PrismaGenericRepositoryFactory } from 'src/framework/data-providers/generic.prisma.repository';
 import { LoginController } from './login.controller';
 import { PrismaService } from 'src/framework/data-providers/prisma.service';
-import { AuthToken } from 'src/core/entities/AuthToken';
+import { AuthToken } from 'src/core/entities/authtoken.entity';
 
 @Module({
   imports: [],

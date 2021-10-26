@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { AuthToken } from 'src/core/entities/AuthToken';
+import { AuthToken } from 'src/core/entities/authtoken.entity';
 import { MockGenericRepository } from '../data-providers/generic.mock.repository';
 import { PrismaGenericRepositoryFactory } from '../data-providers/generic.prisma.repository';
 import { PrismaService } from '../data-providers/prisma.service';

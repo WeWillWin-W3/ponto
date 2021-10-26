@@ -2,9 +2,11 @@ import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { IsString } from 'class-validator';
 import { GenericRepository } from 'src/core/data-providers/generic.repository';
-import { isLeft, mapLeft } from 'src/core/logic/Either';
+import { isLeft } from 'src/core/logic/Either';
 import { GenerateAuthTokenUseCase } from 'src/core/usecases/generateauthtoken.usecase';
-import { AuthToken } from 'src/core/entities/AuthToken';
+import { AuthToken } from 'src/core/entities/authtoken.entity';
+import { UseCaseInstance } from 'src/core/domain/usecase.entity';
+import { GenerateJWTUseCase } from 'src/core/usecases/generatejwt.usecase';
 
 class LoginDTO {
   @IsString()
@@ -16,11 +18,18 @@ class LoginDTO {
 
 @Controller('/login')
 export class LoginController {
+  private generateAuthToken: UseCaseInstance<typeof GenerateAuthTokenUseCase>;
+
   constructor(
     @Inject('UserRepository') private userRepository: GenericRepository<User>,
     @Inject('TokenRepository')
     private tokenRepository: GenericRepository<AuthToken>,
-  ) {}
+  ) {
+    // TODO: Get secret from .env
+    const generateJWTUseCase = GenerateJWTUseCase({ secret: 'secret' });
+
+    this.generateAuthToken = GenerateAuthTokenUseCase({ generateJWTUseCase });
+  }
 
   @Post()
   async login(@Body() loginDto: LoginDTO) {
@@ -38,16 +47,17 @@ export class LoginController {
       return { message: 'Wrong password' };
     }
 
-    // TODO: Use case injection
-    const token = GenerateAuthTokenUseCase({})({ user: userOrError.value });
+    const token = this.generateAuthToken({ user: userOrError.value });
 
     // TODO: specific tokenRepository
     const tokenOrError = await this.tokenRepository.create(token);
 
-    const tokenOrErrorMessage = mapLeft(tokenOrError, (err) => ({
-      message: `Cannot create token: ${err.message}`,
-    }));
+    if (isLeft(tokenOrError)) {
+      return {
+        message: `Cannot create token: ${tokenOrError.value.message}`,
+      };
+    }
 
-    return tokenOrErrorMessage.value;
+    return tokenOrError.value.jwt;
   }
 }

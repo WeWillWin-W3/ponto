@@ -2,7 +2,7 @@ import { User } from '.prisma/client';
 
 type UUID = string;
 
-export interface AuthToken {
+export interface AuthTokenClaims {
   // iss
   issuer: string;
   // sub
@@ -15,4 +15,8 @@ export interface AuthToken {
   issuedAt: number;
   // jti
   jwtId: UUID;
+}
+
+export interface AuthToken extends AuthTokenClaims {
+  jwt: string;
 }

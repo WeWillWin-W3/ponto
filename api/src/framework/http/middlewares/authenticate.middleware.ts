@@ -9,7 +9,7 @@ import {
 import { Request, Response, NextFunction } from 'express';
 import { GenericRepository } from 'src/core/data-providers/generic.repository';
 import { isLeft } from 'src/core/logic/Either';
-import { AuthToken } from 'src/core/entities/AuthToken';
+import { AuthToken } from 'src/core/entities/authtoken.entity';
 
 export const UserRolePriority: Record<user_role, number> = {
   admin: 2,
@@ -34,7 +34,7 @@ export class AuthenticateMiddleware implements NestMiddleware {
       return next();
     }
 
-    const tokenOrError = await this.tokenRepository.getOne({ jwtId: token });
+    const tokenOrError = await this.tokenRepository.getOne({ jwt: token });
 
     if (isLeft(tokenOrError)) {
       return res.json({ error: 'Invalid token', message: 'Invalid token' });
