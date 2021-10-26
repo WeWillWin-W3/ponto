@@ -47,9 +47,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ArrayUser'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ArrayUser'
             text/plain:
               schema:
                 type: string
@@ -104,9 +101,6 @@ paths:
           description: "Operação bem sucedida"
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
               schema:
                 $ref: '#/components/schemas/User'
             text/plain:
@@ -188,9 +182,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ArrayCompany'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ArrayCompany'
             text/plain:
               schema:
                 type: string
@@ -238,9 +229,6 @@ paths:
           description: "Operação bem sucedida"
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/Company'
-            application/xml:
               schema:
                 $ref: '#/components/schemas/Company'
             text/plain:
@@ -322,9 +310,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ArrayEmployee'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ArrayEmployee'
             text/plain:
               schema:
                 type: string
@@ -370,9 +355,6 @@ paths:
           description: "Operação bem sucedida"
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/Employee'
-            application/xml:
               schema:
                 $ref: '#/components/schemas/Employee'
             text/plain:
@@ -454,9 +436,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ArrayAttendance'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ArrayAttendance'
             text/plain:
               schema:
                 type: string
@@ -504,9 +483,6 @@ paths:
           description: "Operação bem sucedida"
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/Attendance'
-            application/xml:
               schema:
                 $ref: '#/components/schemas/Attendance'
             text/plain:
@@ -684,9 +660,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ArrayWorkSchedule'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ArrayWorkSchedule'
             text/plain:
               schema:
                 type: string
@@ -734,9 +707,6 @@ paths:
           description: "Operação bem sucedida"
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/WorkSchedule'
-            application/xml:
               schema:
                 $ref: '#/components/schemas/WorkSchedule'
             text/plain:
@@ -962,8 +932,6 @@ components:
           type: integer
         name:
           type: string
-      xml:
-        name: "Company"
     ArrayCompany:
       type: object
       properties:
@@ -971,8 +939,6 @@ components:
           type: array
           items:
             type: object
-      xml:
-        name: "ArrayCompany"
     Attendance:
       type: object
       required:
@@ -988,8 +954,6 @@ components:
           type: string
         employee:
           type: integer
-      xml:
-        name: "Attendance"
     ArrayAttendance:
       type: object
       properties:
@@ -997,8 +961,6 @@ components:
           type: array
           items:
             type: object
-      xml:
-        name: "ArrayAttendance"
     Employee:
       type: object
       required:
@@ -1014,8 +976,6 @@ components:
           type: integer
         company:
           type: integer
-      xml:
-        name: "Employee"
     ArrayEmployee:
       type: object
       properties:
@@ -1023,8 +983,6 @@ components:
           type: array
           items:
             type: object
-      xml:
-        name: "ArrayEmployee"
     AttendanceValidator:
       type: object
       required:
@@ -1039,8 +997,6 @@ components:
           type: string
           enum:
           - "QRCode"
-      xml:
-        name: "AttendanceValidator"
     User:
       type: object
       required:
@@ -1061,8 +1017,6 @@ components:
           - "basic"
           - "manager"
           - "admin"
-      xml:
-        name: "User"
     ArrayUser:
       type: object
       properties:
@@ -1070,8 +1024,6 @@ components:
           type: array
           items:
             type: object
-      xml:
-        name: "ArrayUser"
     WorkSchedule:
       type: object
       required:
@@ -1083,8 +1035,6 @@ components:
           type: string
         workable:
           type: boolean
-      xml:
-        name: "WorkSchedule"
     ArrayWorkSchedule:
       type: object
       properties:
@@ -1092,8 +1042,6 @@ components:
           type: array
           items:
             type: object
-      xml:
-        name: "ArrayWorkSchedule"
     AttendanceCorrectionRequest:
       type: object
       properties:
@@ -1110,8 +1058,6 @@ components:
           type: boolean
         description:
           type: string
-      xml:
-        name: "AttendanceCorrectionRequest"
     OvertimeWorkApproval:
       type: object
       required:
@@ -1129,8 +1075,6 @@ components:
           format: "timestamp"
         approver:
           type: integer
-      xml:
-        name: "OvertimeWorkApproval"
     ManagerAttendanceSubmission:
       type: object
       properties:
@@ -1138,8 +1082,6 @@ components:
           type: integer
         manager:
           type: integer
-      xml:
-        name: "ManagerAttendanceSubmission"
     WorkScheduleEmployee:
       type: object
       properties:
@@ -1147,8 +1089,6 @@ components:
           type: integer
         employee:
           type: integer
-      xml:
-        name: "WorkScheduleEmployee"
     TimeRange:
       type: object
       required:
@@ -1163,8 +1103,6 @@ components:
         end:
           type: string
           format: "time"
-      xml:
-        name: "TimeRange"
     QRCodeGenerator:
       type: object
       required:
@@ -1176,8 +1114,6 @@ components:
           type: string
         private_key:
           type: string
-      xml:
-        name: "QRCodeGenerator"
   securitySchemes:
     defaultAuth:
       description: ""
