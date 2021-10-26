@@ -1,12 +1,10 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { AuthToken } from 'src/core/entities/AuthToken';
 import { MockGenericRepository } from '../data-providers/generic.mock.repository';
 import { PrismaGenericRepositoryFactory } from '../data-providers/generic.prisma.repository';
 import { PrismaService } from '../data-providers/prisma.service';
-import {
-  AuthenticateMiddleware,
-  Token,
-} from './middlewares/authenticate.middleware';
+import { AuthenticateMiddleware } from './middlewares/authenticate.middleware';
 import { AuthenticateModule } from './modules/authentication/authentication.module';
 import { CrudModule } from './modules/crud/crud.module';
 
@@ -20,7 +18,7 @@ import { CrudModule } from './modules/crud/crud.module';
     },
     {
       provide: 'TokenRepository',
-      useValue: new MockGenericRepository<Token>('token'),
+      useValue: new MockGenericRepository<AuthToken>('token'),
     },
   ],
 })

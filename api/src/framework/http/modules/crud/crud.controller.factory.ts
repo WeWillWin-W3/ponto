@@ -49,12 +49,14 @@ const controllerDecoratorByAction: Record<
   update: Put,
 };
 
+type CrudControllerDependencies<T> = {
+  genericRepository: GenericRepository<T>;
+};
+
 type CustomActions<T> = Partial<
   {
     [action in CrudControllerAction]: (
-      dependenciesFetcher: () => {
-        genericRepository: GenericRepository<T>;
-      },
+      dependencies: CrudControllerDependencies<T>,
     ) => (request: Request, response: Response) => Promise<any>;
   }
 >;
@@ -89,6 +91,8 @@ export function CrudControllerFactory<T, C, U>({
 
   let controllerDependencies: {
     genericRepository: GenericRepository<T>;
+  } = {
+    genericRepository: undefined,
   };
 
   const hasAuthorization = (action: CrudControllerAction, user: UserModel) =>
@@ -152,10 +156,23 @@ export function CrudControllerFactory<T, C, U>({
     }
   }
 
-  Object.entries(customActions || {}).forEach(
+  const dependencyFetcher = Object.defineProperties(
+    {},
+    Object.keys(controllerDependencies).reduce(
+      (obj, dependencyName) => ({
+        ...obj,
+        [dependencyName]: {
+          enumerable: true,
+          get: () => controllerDependencies[dependencyName],
+        },
+      }),
+      {},
+    ),
+  ) as CrudControllerDependencies<T>;
+
+  Object.entries(customActions ?? {}).forEach(
     ([actionName, actionConstructor]) => {
-      const dependenciesFetcher = () => controllerDependencies;
-      const action = actionConstructor(dependenciesFetcher);
+      const action = actionConstructor(dependencyFetcher);
 
       CrudController.prototype[actionName] = action;
 
