@@ -46,10 +46,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArrayUser'
-            text/plain:
-              schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
         "403":
           description: "Não autorizado"
         "500":
@@ -181,10 +180,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArrayCompany'
-            text/plain:
-              schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/Company'
         "403":
           description: "Não autorizado"
         "500":
@@ -309,10 +307,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArrayEmployee'
-            text/plain:
-              schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
         "403":
           description: "Não autorizado"
         "500":
@@ -435,10 +432,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArrayAttendance'
-            text/plain:
-              schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attendance'
         "403":
           description: "Não autorizado"
         "500":
@@ -659,10 +655,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArrayWorkSchedule'
-            text/plain:
-              schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkSchedule'
         "403":
           description: "Não autorizado"
         "500":
@@ -932,13 +927,6 @@ components:
           type: integer
         name:
           type: string
-    ArrayCompany:
-      type: object
-      properties:
-        companies:
-          type: array
-          items:
-            type: object
     Attendance:
       type: object
       required:
@@ -954,13 +942,6 @@ components:
           type: string
         employee:
           type: integer
-    ArrayAttendance:
-      type: object
-      properties:
-        attendances:
-          type: array
-          items:
-            type: object
     Employee:
       type: object
       required:
@@ -976,13 +957,6 @@ components:
           type: integer
         company:
           type: integer
-    ArrayEmployee:
-      type: object
-      properties:
-        employees:
-          type: array
-          items:
-            type: object
     AttendanceValidator:
       type: object
       required:
@@ -1017,13 +991,6 @@ components:
           - "basic"
           - "manager"
           - "admin"
-    ArrayUser:
-      type: object
-      properties:
-        users:
-          type: array
-          items:
-            type: object
     WorkSchedule:
       type: object
       required:
@@ -1035,13 +1002,6 @@ components:
           type: string
         workable:
           type: boolean
-    ArrayWorkSchedule:
-      type: object
-      properties:
-        workschedules:
-          type: array
-          items:
-            type: object
     AttendanceCorrectionRequest:
       type: object
       properties:
