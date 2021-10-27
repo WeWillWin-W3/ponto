@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { User } from '@prisma/client';
 import { AuthToken } from 'src/core/entities/authtoken.entity';
 import { InMemoryGenericRepository } from '../data-providers/generic.inmemory.repository';
@@ -9,7 +10,7 @@ import { AuthenticateModule } from './modules/authentication/authentication.modu
 import { CrudModule } from './modules/crud/crud.module';
 
 @Module({
-  imports: [CrudModule, AuthenticateModule],
+  imports: [CrudModule, AuthenticateModule, ConfigModule.forRoot()],
   providers: [
     PrismaService,
     {

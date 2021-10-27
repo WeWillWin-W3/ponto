@@ -9,6 +9,7 @@ import { UseCaseInstance } from 'src/core/domain/usecase.entity';
 import { GenerateJWTUseCase } from 'src/core/usecases/generatejwt.usecase';
 import { Company } from 'src/core/entities/company.entity';
 import { Request } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 class LoginDTO {
   @IsString()
@@ -33,9 +34,10 @@ export class LoginController {
     private employeeRepository: GenericRepository<Employee>,
     @Inject('TokenRepository')
     private tokenRepository: GenericRepository<AuthToken>,
+    private configService: ConfigService,
   ) {
-    // TODO: Get secret from .env
-    const generateJWTUseCase = GenerateJWTUseCase({ secret: 'secret' });
+    const secret = this.configService.get<string>('JWT_SECRET');
+    const generateJWTUseCase = GenerateJWTUseCase({ secret });
 
     this.generateAuthToken = GenerateAuthTokenUseCase({ generateJWTUseCase });
   }

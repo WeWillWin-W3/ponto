@@ -5,9 +5,10 @@ import { PrismaGenericRepositoryFactory } from 'src/framework/data-providers/gen
 import { LoginController } from './login.controller';
 import { PrismaService } from 'src/framework/data-providers/prisma.service';
 import { AuthToken } from 'src/core/entities/authtoken.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [],
+  imports: [ConfigModule],
   controllers: [LoginController],
   providers: [
     PrismaService,
