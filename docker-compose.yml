@@ -1,16 +1,23 @@
 version: '3.1'
 
 services:
+  api:
+    container_name: ponto-api
+    build: ./api
+    env_file:
+      - ./api/.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - database
 
   database:
     container_name: ponto-database
     image: postgres:13
     ports:
       - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ponto
+    env_file:
+      - ./database/.env
     volumes:
       - "postgres_data:/var/lib/postgresql/data"
       - "./database/sql:/docker-entrypoint-initdb.d/sql:z"
@@ -21,9 +28,8 @@ services:
     image: dpage/pgadmin4
     ports:
       - "8080:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: postgres@email.com
-      PGADMIN_DEFAULT_PASSWORD: postgres
+    env_file:
+      - ./database/.env
 
 volumes:
   postgres_data:
