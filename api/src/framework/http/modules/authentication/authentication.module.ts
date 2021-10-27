@@ -1,6 +1,6 @@
-import { User } from '@prisma/client';
+import { Employee, User } from '@prisma/client';
 import { Module } from '@nestjs/common';
-import { MockGenericRepository } from 'src/framework/data-providers/generic.mock.repository';
+import { InMemoryGenericRepository } from 'src/framework/data-providers/generic.inmemory.repository';
 import { PrismaGenericRepositoryFactory } from 'src/framework/data-providers/generic.prisma.repository';
 import { LoginController } from './login.controller';
 import { PrismaService } from 'src/framework/data-providers/prisma.service';
@@ -16,8 +16,12 @@ import { AuthToken } from 'src/core/entities/authtoken.entity';
       useClass: PrismaGenericRepositoryFactory<User>('User'),
     },
     {
+      provide: 'EmployeeRepository',
+      useClass: PrismaGenericRepositoryFactory<Employee>('Employee'),
+    },
+    {
       provide: 'TokenRepository',
-      useValue: new MockGenericRepository<AuthToken>('token'),
+      useValue: new InMemoryGenericRepository<AuthToken>('AuthToken'),
     },
   ],
 })

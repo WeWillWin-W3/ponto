@@ -1,7 +1,7 @@
 import { User } from '.prisma/client';
 import { randomUUID } from 'crypto';
 import { UseCase, UseCaseInstance } from '../domain/usecase.entity';
-import { AuthToken } from '../entities/authtoken.entity';
+import { AuthToken, AuthTokenClaims } from '../entities/authtoken.entity';
 import { GenerateJWTUseCase } from './generatejwt.usecase';
 
 type Dependencies = {
@@ -11,8 +11,9 @@ type Dependencies = {
 };
 
 type Properties = {
-  user: User;
+  userId: User['id'];
   issuer?: string;
+  company?: AuthTokenClaims['company'];
 };
 
 export type GenerateAuthTokenUseCase = UseCase<
@@ -27,18 +28,19 @@ export const GenerateAuthTokenUseCase: GenerateAuthTokenUseCase =
     defaultIssuer = 'ponto.w3.io',
     generateJWTUseCase,
   }) =>
-  ({ user, issuer }) => {
+  ({ userId, issuer, company }) => {
     const jwtId = uuidGenerator();
     const issuedAt = Date.now();
     const expirationTime = issuedAt + 2000;
 
     const authTokenClaims = {
       issuer: issuer ?? defaultIssuer,
-      subject: user.id,
+      subject: userId,
       audience: defaultIssuer,
       expirationTime,
       issuedAt,
       jwtId,
+      company,
     };
 
     const authToken = {

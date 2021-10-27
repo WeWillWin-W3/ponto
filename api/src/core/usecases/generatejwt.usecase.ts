@@ -27,9 +27,11 @@ export const GenerateJWTUseCase: GenerateJWTUseCase =
       issuedAt: iat,
       jwtId: jti,
       expirationTime: expiresIn,
+      ...aditionalData
     } = claims;
 
     const payload = {
+      ...aditionalData,
       iss,
       sub,
       aud,

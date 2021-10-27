@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { AuthToken } from 'src/core/entities/authtoken.entity';
-import { MockGenericRepository } from '../data-providers/generic.mock.repository';
+import { InMemoryGenericRepository } from '../data-providers/generic.inmemory.repository';
 import { PrismaGenericRepositoryFactory } from '../data-providers/generic.prisma.repository';
 import { PrismaService } from '../data-providers/prisma.service';
 import { AuthenticateMiddleware } from './middlewares/authenticate.middleware';
@@ -18,12 +18,12 @@ import { CrudModule } from './modules/crud/crud.module';
     },
     {
       provide: 'TokenRepository',
-      useValue: new MockGenericRepository<AuthToken>('token'),
+      useValue: new InMemoryGenericRepository<AuthToken>('AuthToken'),
     },
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthenticateMiddleware).forRoutes('*');
+    consumer.apply(AuthenticateMiddleware).exclude('/login(.*)').forRoutes('*');
   }
 }

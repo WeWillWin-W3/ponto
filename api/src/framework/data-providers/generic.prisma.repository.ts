@@ -20,8 +20,10 @@ export function PrismaGenericRepositoryFactory<T>(
       return this.prisma[prismaDelegateName];
     }
 
-    async getAll(): Promise<Either<RepositoryError, T[]>> {
-      return fromPromise(this.entityDelegate.findMany());
+    async getAll(query?: Partial<T>): Promise<Either<RepositoryError, T[]>> {
+      return fromPromise(
+        this.entityDelegate.findMany(query ? { where: query } : {}),
+      );
     }
 
     async getOne(query: Partial<T>): Promise<Either<RepositoryError, T>> {

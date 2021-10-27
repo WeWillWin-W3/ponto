@@ -1,4 +1,5 @@
 import { User } from '.prisma/client';
+import { Company } from './company.entity';
 
 type UUID = string;
 
@@ -15,6 +16,8 @@ export interface AuthTokenClaims {
   issuedAt: number;
   // jti
   jwtId: UUID;
+
+  company?: Company['id'];
 }
 
 export interface AuthToken extends AuthTokenClaims {

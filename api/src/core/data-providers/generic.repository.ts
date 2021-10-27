@@ -11,7 +11,7 @@ export const RepositoryErrorFilter = <T>(either: Either<RepositoryError, T>) =>
   mapLeft(either, RepositoryErrorFormatter);
 
 export interface GenericRepository<T> {
-  getAll(): Promise<Either<RepositoryError, T[]>>;
+  getAll(query?: Partial<T>): Promise<Either<RepositoryError, T[]>>;
   getOne(query: Partial<T>): Promise<Either<RepositoryError, T>>;
   updateOne(
     query: Partial<T>,

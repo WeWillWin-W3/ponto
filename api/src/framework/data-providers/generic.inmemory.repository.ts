@@ -12,25 +12,27 @@ const genericCompare =
     Object.entries(query).every(([key, value]) => data[key] === value);
 
 @Injectable()
-export class MockGenericRepository<T> implements GenericRepository<T> {
+export class InMemoryGenericRepository<T> implements GenericRepository<T> {
   static DB = {};
   entityDelegate: any;
 
   constructor(private entityName: string) {
-    MockGenericRepository.DB[entityName] =
-      MockGenericRepository.DB[entityName] ?? [];
+    InMemoryGenericRepository.DB[entityName] =
+      InMemoryGenericRepository.DB[entityName] ?? [];
   }
 
   private get db(): T[] {
-    return MockGenericRepository.DB[this.entityName];
+    return InMemoryGenericRepository.DB[this.entityName];
   }
 
   private set db(data: T[]) {
-    MockGenericRepository.DB[this.entityName] = data;
+    InMemoryGenericRepository.DB[this.entityName] = data;
   }
 
-  async getAll(): Promise<Either<RepositoryError, T[]>> {
-    return right(this.db);
+  async getAll(query?: Partial<T>): Promise<Either<RepositoryError, T[]>> {
+    return query
+      ? right(this.db.filter(genericCompare(query)))
+      : right(this.db);
   }
 
   async getOne(query: Partial<T>): Promise<Either<RepositoryError, T>> {
@@ -49,8 +51,8 @@ export class MockGenericRepository<T> implements GenericRepository<T> {
       return left(new Error('Not found'));
     }
 
-    this.db = this.db.filter((el, i) =>
-      i === oneIndex ? [...(el as any), ...(data as any)] : el,
+    this.db = this.db.map((el, i) =>
+      i === oneIndex ? { ...el, ...data } : el,
     );
 
     return right(this.db[oneIndex]);

@@ -26,13 +26,12 @@ export const CrudModule = CrudModuleFactory([
     UpdateDto: UpdateEmployeeDto,
     customActions: {
       create: (deps) => async (req, res) => {
-        return res.json({ message: 'Aqui vai um useCase customizado' });
-      },
-      getAll: (deps) => async (req, res) => {
         const { genericRepository } = deps;
         const result = await genericRepository.getAll();
 
-        return res.json(result.value);
+        console.log(result.value);
+
+        return res.json({ message: 'Aqui vai um useCase customizado' });
       },
     },
     authorizationLevel: {

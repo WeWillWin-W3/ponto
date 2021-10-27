@@ -9,21 +9,22 @@ import {
   Put,
   Request as RequestDecorator,
   Response as ResponseDecorator,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ArgumentMetadata,
+  CanActivate,
+  ExecutionContext,
   PipeTransform,
   Type as NestType,
 } from '@nestjs/common/interfaces';
 import { GenericRepository } from 'src/core/data-providers/generic.repository';
 import { ClassType } from 'src/core/logic/ClassType';
 import { Request, Response } from 'express';
-import {
-  User,
-  UserRolePriority,
-} from '../../middlewares/authenticate.middleware';
+import { UserRolePriority } from '../../middlewares/authenticate.middleware';
 import { PartialRecord } from 'src/application/entities/util';
 import { user_role, User as UserModel } from '.prisma/client';
+import { Observable } from 'rxjs';
 
 type PrimaryKeyTransformerFn<T, K extends keyof T & string> = (
   primaryKey: K,
@@ -74,6 +75,25 @@ export type CrudControllerFactoryProps<T, C, U> = {
   authorizationLevel?: ActionsAuthorizationLevel;
 };
 
+const UserRoleGuard = (
+  authorizationLevel: ActionsAuthorizationLevel,
+): CanActivate => ({
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const request = context.switchToHttp().getRequest();
+    const user = request.user as UserModel;
+    const controllerActionName = context.getHandler()
+      .name as CrudControllerAction;
+    const actionAuthorization = authorizationLevel[controllerActionName];
+
+    return actionAuthorization
+      ? UserRolePriority[user.user_role] >=
+          UserRolePriority[actionAuthorization]
+      : true;
+  },
+});
+
 export function CrudControllerFactory<T, C, U>({
   route,
   primaryKey,
@@ -82,7 +102,7 @@ export function CrudControllerFactory<T, C, U>({
   CreateDto,
   UpdateDto,
   customActions,
-  authorizationLevel,
+  authorizationLevel = {},
 }: CrudControllerFactoryProps<T, C, U>): NestType<any> {
   const primaryKeyRoute = `/:${primaryKey}`;
   const primaryKeyParamPipes = primaryKeyTransformer
@@ -95,11 +115,7 @@ export function CrudControllerFactory<T, C, U>({
     genericRepository: undefined,
   };
 
-  const hasAuthorization = (action: CrudControllerAction, user: UserModel) =>
-    authorizationLevel?.[action]
-      ? UserRolePriority[user.user_role] >=
-        UserRolePriority[authorizationLevel[action]]
-      : true;
+  const userRoleGuard = UserRoleGuard(authorizationLevel);
 
   @Controller(route)
   class CrudController {
@@ -110,6 +126,7 @@ export function CrudControllerFactory<T, C, U>({
     }
 
     @Post()
+    @UseGuards(userRoleGuard)
     @SetParamTypes(CreateDto)
     async create(@Body() createDto: C) {
       const result = await this.genericRepository.create(createDto);
@@ -117,6 +134,7 @@ export function CrudControllerFactory<T, C, U>({
     }
 
     @Get(primaryKeyRoute)
+    @UseGuards(userRoleGuard)
     async getOne(
       @Param(primaryKey, ...primaryKeyParamPipes)
       pk: T[typeof primaryKey],
@@ -127,13 +145,14 @@ export function CrudControllerFactory<T, C, U>({
     }
 
     @Get()
-    async getAll(@User() user: UserModel) {
-      console.log(hasAuthorization('getAll', user));
+    @UseGuards(userRoleGuard)
+    async getAll() {
       const result = await this.genericRepository.getAll();
       return result.value;
     }
 
     @Delete(primaryKeyRoute)
+    @UseGuards(userRoleGuard)
     async deleteOne(
       @Param(primaryKey, ...primaryKeyParamPipes)
       pk: T[typeof primaryKey],
@@ -144,6 +163,7 @@ export function CrudControllerFactory<T, C, U>({
     }
 
     @Put(primaryKeyRoute)
+    @UseGuards(userRoleGuard)
     @SetParamTypes(String, UpdateDto)
     async update(
       @Param(primaryKey, ...primaryKeyParamPipes)

@@ -31,13 +31,20 @@ export class AuthenticateMiddleware implements NestMiddleware {
     const token = authorization?.split('Bearer ')?.[1];
 
     if (!token) {
-      return next();
+      return res.json({ error: 'Invalid token', message: 'Invalid token' });
     }
 
     const tokenOrError = await this.tokenRepository.getOne({ jwt: token });
 
     if (isLeft(tokenOrError)) {
       return res.json({ error: 'Invalid token', message: 'Invalid token' });
+    }
+
+    if (tokenOrError.value.company === undefined) {
+      return res.json({
+        error: 'Undefined company',
+        message: 'An user token must company ....',
+      });
     }
 
     const userOrError = await this.userRepository.getOne({
@@ -48,6 +55,7 @@ export class AuthenticateMiddleware implements NestMiddleware {
       return res.json({ error: 'Invalid token', message: 'Invalid token' });
     }
 
+    req['authToken'] = tokenOrError.value;
     req['user'] = userOrError.value;
 
     return next();
@@ -58,5 +66,12 @@ export const User = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
     return request.user;
+  },
+);
+
+export const Token = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    return request.authToken;
   },
 );
