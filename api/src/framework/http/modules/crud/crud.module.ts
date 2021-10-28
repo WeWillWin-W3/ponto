@@ -1,5 +1,3 @@
-import { randomUUID } from 'crypto';
-import { GenerateJWTUseCase } from 'src/core/usecases/generatejwt.usecase';
 import { numberTransformer } from './crud.controller.factory';
 import { CrudModuleController, CrudModuleFactory } from './crud.module.factory';
 import {
