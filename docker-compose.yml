@@ -30,6 +30,8 @@ services:
       - "8080:80"
     env_file:
       - ./database/.env
+    logging:
+      driver: none
 
 volumes:
   postgres_data:
