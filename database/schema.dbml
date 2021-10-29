@@ -1,7 +1,6 @@
 table Employee {
   id int [pk]
-  name varchar [not null]
-  user int [not null, ref: > User.id]
+  user int [ref: > User.id]
   company int [not null, ref: > Company.id]
 }
 
@@ -40,7 +39,8 @@ table Company {
 
 table User {
   id int [pk]
-  username varchar [not null]
+  name varchar [not null]
+  email varchar [not null]
   password varchar [not null]
   user_role user_role [not null]
 }
