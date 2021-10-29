@@ -13,20 +13,14 @@ info:
     name: MIT
     url: "https://opensource.org/licenses/MIT"
 servers:
-  - url: http://{ip_dns}:{port}/v1
+  - url: https://{ip_dns}/v1
     description: Servidor de produção
     variables:
       ip_dns:
         enum:
-          - "177.93.109.159"
-          - "192.168.100.20"
+          - "ponto-api-gateway"
           - "localhost"
         default: "localhost"
-      port:
-        enum:
-          - "3000"
-          - "80"
-        default: "3000"
 tags:
   - name: user
   - name: company
