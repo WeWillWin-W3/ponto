@@ -23,11 +23,19 @@ export const CrudModule = CrudModuleFactory([
     entityName: 'User',
     CreateDto: CreateUserDto,
     UpdateDto: UpdateUserDto,
-    // customActions: {
-    //   create: (deps) => async (req, res) => {
-    //     return res.json({ message: 'Aqui vai um useCase customizado' });
-    //   },
-    // },
+    customActions: {
+      create: (deps) => async (req, res) => {
+        const { genericRepository } = deps;
+        const result = await genericRepository.getAll();
+
+        console.log(result.value);
+
+        return res.json({ message: 'Aqui vai um useCase customizado' });
+      },
+    },
+    authorizationLevel: {
+      getAll: 'admin',
+    },
   }),
   CrudModuleController({
     route: '/attendances',
