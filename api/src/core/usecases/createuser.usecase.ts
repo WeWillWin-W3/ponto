@@ -5,7 +5,7 @@ import {
   RepositoryError,
 } from '../data-providers/generic.repository';
 import { UseCase } from '../domain/usecase.entity';
-import { Either, isRight, left } from '../logic/Either';
+import { Either, isRight, left, mapRight } from '../logic/Either';
 
 export interface CreateUser {
   name: string;
@@ -36,7 +36,7 @@ interface UserValidationError {
 export type CreateUserUseCase = UseCase<
   Dependencies,
   Properties,
-  Promise<Either<UserValidationError | RepositoryError, User>>
+  Promise<Either<UserValidationError | RepositoryError, Omit<User, 'password'>>>
 >;
 
 export const CreateUserUseCase: CreateUserUseCase =
@@ -83,5 +83,10 @@ export const CreateUserUseCase: CreateUserUseCase =
 
     const createUserResult = await userRepository.create(user);
 
-    return createUserResult;
+    const userWithoutPassOrError = mapRight(
+      createUserResult,
+      ({ password, ...rest }) => rest,
+    );
+
+    return userWithoutPassOrError;
   };

@@ -10,6 +10,7 @@ import { GenerateAuthTokenUseCase } from './generateauthtoken.usecase';
 import { AuthToken } from '../entities/authtoken.entity';
 import { Employee } from '.prisma/client';
 import { Company } from '../entities/company.entity';
+import * as jwt from 'jsonwebtoken';
 
 export interface SetCompany {
   company: Company['id'];
@@ -20,8 +21,12 @@ type EncryptedPasswordComparator = (
   plainPassword: string,
 ) => boolean;
 
+type TokenValidator = (token: string, secret: string) => boolean;
+
 type Dependencies = {
   passwordComparator?: EncryptedPasswordComparator;
+  tokenValidator?: TokenValidator;
+  secret: string;
   generateAuthTokenUseCase: UseCaseInstance<GenerateAuthTokenUseCase>;
   tokenRepository: GenericRepository<AuthToken>;
   employeeRepository: GenericRepository<Employee>;
@@ -39,9 +44,28 @@ export type SetTokenCompanyUseCase = UseCase<
 >;
 
 export const SetTokenCompanyUseCase: SetTokenCompanyUseCase =
-  ({ tokenRepository, employeeRepository, generateAuthTokenUseCase }) =>
+  ({
+    tokenRepository,
+    employeeRepository,
+    generateAuthTokenUseCase,
+    tokenValidator,
+    secret,
+  }) =>
   async ({ companyInfo, token }) => {
+    if (!tokenValidator) {
+      tokenValidator = (token, secret) => jwt.verify(token, secret);
+    }
+
     if (!token) {
+      const error = new Error('Invalid token');
+      error.name = 'Invalid token';
+
+      return left(error);
+    }
+
+    const tokenIsValid = tokenValidator(token, secret);
+
+    if (!tokenIsValid) {
       const error = new Error('Invalid token');
       error.name = 'Invalid token';
 

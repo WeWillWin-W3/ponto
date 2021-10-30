@@ -61,6 +61,7 @@ export class LoginController {
       employeeRepository: this.employeeRepository,
       tokenRepository: this.tokenRepository,
       generateAuthTokenUseCase: generateAuthToken,
+      secret,
     });
   }
 
