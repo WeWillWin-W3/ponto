@@ -14,13 +14,41 @@ O **W3 Ponto** é uma aplicação de ponto eletrônico para empresas e funcioná
 
 Com o **W3 Ponto** é muito fácil e prático realizar o registro de pontos, funcionários, turnos de trabalho e muito mais.
 
-## :books: Arquitetura
+## :books: Documentação
 
 ### Diagrama de entidade e relacionamento
 ![Diagrama de entidade e relacionamento](./docs/schema.png)
 
 ### Diagrama de implantação
 ![Diagrama de implantação](./docs/deployment-diagram.png)
+
+## Conceitos de sistemas distribuídos
+Neste tópico será apresentado conceitos vistos em sala de aula que foram aplicados para a execução do trabalho.
+
+### Arquitetura
+A aplicação **W3 Ponto** utiliza o modelo arquitetural orientado a serviços (SOA). Dessa forma, foi construído um sistema único que provê acesso aos recursos por meio de uma API REST utilizando JSON. Os recursos disponibilizados são: authentication, employees, users, attendances, companies, overtimework e workschedule. Acesse `docs/openapi.yml` para mais detalhes de acesso aos endpoints.
+
+Além disso, a aplicação foi desenvolvida com Node.js e TypeScript e PostgreSQL como banco de dados.
+
+### Virtualização
+Com o objetivo de manter a homogeneidade de ambientes de desenvolvimento e produção, fez-se o uso do [docker](https://www.docker.com/) para realizar a virtualização da aplicação a nível de sistema operacional e entregar software em pacotes chamados containers. _O docker compartilha o mesmo núcleo com todos os containers em execução, porém cada container possui o seu próprio espaço de usuário, garantindo assim o isolamento de recursos lógicos dos ambientes virtuais._
+
+Além do docker, foi utilizado o [docker-compose](https://docs.docker.com/compose/) para definir, configurar e executar um ambiente com múltiplos containers que precisam conversar entre si.
+
+Acesse o [diagrama de implantação](#diagrama-de-implantação) para obter mais detalhes de como está configurado o ambiente de execução utilizando containers.
+
+### Tolerância a falha
+Para garantir maior disponibilidade da aplicação, utilizou-se a opção de `scaling` para executar a API em 4 nós idênticos e simultâneos.
+
+Falando especificamente a nível de implementação, recorremos ao conceito [either](https://blog.logrocket.com/javascript-either-monad-error-handling/), muito conhecido no paradigma de programação funcional, para tratar erros como valores em vez de exceptions, evitando assim, quebras no fluxo principal de execução da aplicação (...).
+
+### Nomeações
+
+### Sincronização
+
+### Consistência
+
+### Replicação
 
 ## :runner: Utilização
 
