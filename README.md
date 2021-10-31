@@ -2,6 +2,11 @@
 <img src=".github/assets/logo.png" width="200" />
 
 Aplicação para registro de ponto e monitoramento de jornadas de trabalho
+
+<img src="https://img.shields.io/badge/Node.js-4667d6?style=for-the-badge&logo=nodedotjs&logoColor=white" width="80" />
+<img src="https://img.shields.io/badge/TypeScript-6b42d0?style=for-the-badge&logo=typescript&logoColor=white" width="100" />
+<img src="https://img.shields.io/badge/PostgreSQL-a934d3?style=for-the-badge&logo=postgresql&logoColor=white" width="102" />
+<img src="https://validator.swagger.io/validator/?url=https%3A%2F%2Fraw.githubusercontent.com%2FWeWillWin-W3%2Fponto%2Fmain%2Fdocs%2Fopenapi.yml" height="22" width="80" />
 </div>
 
 ## :eyes: Visão geral
@@ -9,9 +14,7 @@ O **W3 Ponto** é uma aplicação de ponto eletrônico para empresas e funcioná
 
 Com o **W3 Ponto** é muito fácil e prático realizar o registro de pontos, funcionários, turnos de trabalho e muito mais.
 
-(...)
-
-## :books: Documentação
+## :books: Arquitetura
 
 ### Diagrama de entidade e relacionamento
 ![Diagrama de entidade e relacionamento](./docs/schema.png)
@@ -53,4 +56,4 @@ Após concluir os passos anteriores, os seguintes recursos ficarão disponíveis
 - **Enpoints da aplicação (api):** https://localhost/v1/*
 
 ### Como utilizar outros clientes de APIs
-Caso você não tenha muita experiência com o Swagger ou prefira utilizar outro cliente de APIs como [Postman](https://www.postman.com/) ou [Insomnia](https://insomnia.rest/) é possível configurar tais ferramentas facilmente. Para isso, faça upload do arquivo `docs/openapi.yml` na sua ferramenta preferida e tenha acesso ao ambiente configurado para os testes.
+Caso você não tenha muita experiência com o Swagger ou prefira utilizar outro cliente de APIs como [Postman](https://www.postman.com/) ou [Insomnia](https://insomnia.rest/) é possível configurar tais ferramentas facilmente. Para isso, importe o arquivo `docs/openapi.yml` na sua ferramenta preferida e tenha acesso ao ambiente configurado para os testes.
