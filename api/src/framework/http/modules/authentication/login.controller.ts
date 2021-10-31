@@ -13,7 +13,7 @@ import { ConfigService } from '@nestjs/config';
 
 class LoginDTO {
   @IsString()
-  username: string;
+  email: string;
 
   @IsString()
   password: string;
@@ -44,9 +44,9 @@ export class LoginController {
 
   @Post()
   async login(@Body() loginDto: LoginDTO) {
-    const { username, password: plainPassword } = loginDto;
+    const { email, password: plainPassword } = loginDto;
 
-    const userOrError = await this.userRepository.getOne({ username });
+    const userOrError = await this.userRepository.getOne({ email });
 
     if (isLeft(userOrError)) {
       return { message: 'User not exists' };
