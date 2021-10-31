@@ -1,3 +1,6 @@
+import { User } from 'src/core/entities/user.entity';
+import { GenericRepository } from 'src/core/data-providers/generic.repository';
+import { mapLeft, mapRight } from 'src/core/logic/Either';
 import { numberTransformer } from './crud.controller.factory';
 import { CrudModuleController, CrudModuleFactory } from './crud.module.factory';
 import {
@@ -23,13 +26,40 @@ export const CrudModule = CrudModuleFactory([
     CreateDto: CreateEmployeeDto,
     UpdateDto: UpdateEmployeeDto,
     customActions: {
-      create: (deps) => async (req, res) => {
+      getAll: (deps) => async (req, res) => {
         const { genericRepository } = deps;
-        const result = await genericRepository.getAll();
+        const userRepository = genericRepository as GenericRepository<User>;
+        const usersOrError = await userRepository.getAll();
 
-        console.log(result.value);
+        const usersOrErrorResponse = mapLeft(
+          usersOrError,
+          ({ message, name: error }) => ({ message, error }),
+        );
 
-        return res.json({ message: 'Aqui vai um useCase customizado' });
+        const usersWithoutPasswordOrErrorResponse = mapRight(
+          usersOrErrorResponse,
+          (users) => users.map(({ password, ...userData }) => userData),
+        );
+
+        return res.json(usersWithoutPasswordOrErrorResponse);
+      },
+      getOne: (deps) => async (req, res) => {
+        const { genericRepository } = deps;
+        const userRepository = genericRepository as GenericRepository<User>;
+        const { id } = req.params;
+        const userOrError = await userRepository.getOne({ id: Number(id) });
+
+        const userOrErrorResponse = mapLeft(
+          userOrError,
+          ({ message, name: error }) => ({ message, error }),
+        );
+
+        const userWithoutPasswordOrErrorResponse = mapRight(
+          userOrErrorResponse,
+          ({ password, ...userData }) => userData,
+        );
+
+        return res.json(userWithoutPasswordOrErrorResponse);
       },
     },
     authorizationLevel: {

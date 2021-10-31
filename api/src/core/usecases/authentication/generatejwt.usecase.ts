@@ -1,6 +1,6 @@
-import { UseCase } from '../domain/usecase.entity';
+import { UseCase } from '../../domain/usecase.entity';
 import * as jwt from 'jsonwebtoken';
-import { AuthTokenClaims } from '../entities/authtoken.entity';
+import { AuthTokenClaims } from '../../entities/authtoken.entity';
 
 type Dependencies = {
   jwtSigner?: (

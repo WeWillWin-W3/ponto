@@ -1,11 +1,12 @@
-import { User } from '../entities/user.entity';
+import { User } from '../../entities/user.entity';
 import bcrypt from 'bcrypt';
 import {
   GenericRepository,
   RepositoryError,
-} from '../data-providers/generic.repository';
-import { UseCase } from '../domain/usecase.entity';
-import { Either, isRight, left, mapRight } from '../logic/Either';
+} from '../../data-providers/generic.repository';
+import { UseCase } from '../../domain/usecase.entity';
+import { Either, isRight, left, mapRight } from '../../logic/Either';
+import { DuplicatedEmailError } from '../errors/authentication.error';
 
 export interface CreateUser {
   name: string;
@@ -62,7 +63,7 @@ export const CreateUserUseCase: CreateUserUseCase =
     });
 
     if (isRight(sameEmailUser)) {
-      return left(new Error());
+      return left(new DuplicatedEmailError());
     }
 
     const encryptedPassword = passwordEncrypter(userData.password, {

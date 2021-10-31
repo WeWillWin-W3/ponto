@@ -3,22 +3,22 @@ import { Employee } from '@prisma/client';
 import { IsNumber, IsString } from 'class-validator';
 import { GenericRepository } from 'src/core/data-providers/generic.repository';
 import { mapLeft } from 'src/core/logic/Either';
-import { GenerateAuthTokenUseCase } from 'src/core/usecases/generateauthtoken.usecase';
+import { GenerateAuthTokenUseCase } from 'src/core/usecases/authentication/generateauthtoken.usecase';
 import { AuthToken } from 'src/core/entities/authtoken.entity';
 import { UseCaseInstance } from 'src/core/domain/usecase.entity';
-import { GenerateJWTUseCase } from 'src/core/usecases/generatejwt.usecase';
+import { GenerateJWTUseCase } from 'src/core/usecases/authentication/generatejwt.usecase';
 import { Company } from 'src/core/entities/company.entity';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import {
   AuthenticateUser,
   AuthenticateUserUseCase,
-} from 'src/core/usecases/authenticateuser.usecase';
+} from 'src/core/usecases/authentication/authenticateuser.usecase';
 import { User } from 'src/core/entities/user.entity';
 import {
   SetCompany,
   SetTokenCompanyUseCase,
-} from 'src/core/usecases/settokencompany.usecase';
+} from 'src/core/usecases/authentication/settokencompany.usecase';
 
 class LoginDTO implements AuthenticateUser {
   @IsString()

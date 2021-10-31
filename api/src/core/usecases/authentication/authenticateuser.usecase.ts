@@ -1,15 +1,20 @@
-import { User } from '../entities/user.entity';
+import { User } from '../../entities/user.entity';
 import bcrypt from 'bcrypt';
 import {
   GenericRepository,
   RepositoryError,
-} from '../data-providers/generic.repository';
-import { UseCase, UseCaseInstance } from '../domain/usecase.entity';
-import { Either, isLeft, isRight, left, right } from '../logic/Either';
+} from '../../data-providers/generic.repository';
+import { UseCase, UseCaseInstance } from '../../domain/usecase.entity';
+import { Either, isLeft, isRight, left, right } from '../../logic/Either';
 import { GenerateAuthTokenUseCase } from './generateauthtoken.usecase';
-import { AuthToken } from '../entities/authtoken.entity';
+import { AuthToken } from '../../entities/authtoken.entity';
 import { Employee } from '.prisma/client';
-import { Company } from '../entities/company.entity';
+import { Company } from '../../entities/company.entity';
+import {
+  AuthenticationError,
+  InvalidUserError,
+  WrongPasswordError,
+} from '../errors/authentication.error';
 
 export interface AuthenticateUser extends Pick<User, 'email' | 'password'> {}
 
@@ -38,7 +43,7 @@ type ReturnData = {
 export type AuthenticateUserUseCase = UseCase<
   Dependencies,
   Properties,
-  Promise<Either<Error, ReturnData>>
+  Promise<Either<AuthenticationError | RepositoryError, ReturnData>>
 >;
 
 export const AuthenticateUserUseCase: AuthenticateUserUseCase =
@@ -56,11 +61,11 @@ export const AuthenticateUserUseCase: AuthenticateUserUseCase =
     const userOrError = await userRepository.getOne({ email });
 
     if (isLeft(userOrError)) {
-      return left(new Error('User not exists'));
+      return left(new InvalidUserError('User not exists'));
     }
 
     if (!passwordComparator(userOrError.value.password, plainPassword)) {
-      return left(new Error('Wrong password'));
+      return left(new WrongPasswordError('Wrong password'));
     }
 
     const token = generateAuthTokenUseCase({ userId: userOrError.value.id });
@@ -68,9 +73,7 @@ export const AuthenticateUserUseCase: AuthenticateUserUseCase =
     const tokenOrError = await tokenRepository.create(token);
 
     if (isLeft(tokenOrError)) {
-      return left(
-        new Error(`Cannot create token: ${tokenOrError.value.message}`),
-      );
+      return tokenOrError;
     }
 
     const userEmployeesOrError = await employeeRepository.getAll({
@@ -78,11 +81,7 @@ export const AuthenticateUserUseCase: AuthenticateUserUseCase =
     });
 
     if (isLeft(userEmployeesOrError)) {
-      return left(
-        new Error(
-          `Cannot get employees: ${userEmployeesOrError.value.message}`,
-        ),
-      );
+      return userEmployeesOrError;
     }
 
     const userAvailableCompanies = userEmployeesOrError.value.map(

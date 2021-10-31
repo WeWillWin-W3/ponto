@@ -1,19 +1,19 @@
 import { User } from '../entities/user.entity';
-import { GenericRepository } from '../data-providers/generic.repository';
+import {
+  GenericRepository,
+  RepositoryError,
+} from '../data-providers/generic.repository';
 import { UseCase } from '../domain/usecase.entity';
 import { Either, isLeft, left, right } from '../logic/Either';
 import { AuthToken } from '../entities/authtoken.entity';
-import { Company } from '../entities/company.entity';
 import * as jwt from 'jsonwebtoken';
-
-export interface SetCompany {
-  company: Company['id'];
-}
-
-type EncryptedPasswordComparator = (
-  encryptedPassword: string,
-  plainPassword: string,
-) => boolean;
+import {
+  CompanyNotSetError,
+  InvalidTokenError,
+  MissingTokenError,
+  TokenError,
+} from './errors/token.error';
+import { InvalidCompanyError } from './errors/authentication.error';
 
 type TokenValidator = (token: string, secret: string) => boolean;
 
@@ -36,7 +36,7 @@ type ReturnData = {
 export type ValdiateTokenUseCase = UseCase<
   Dependencies,
   Properties,
-  Promise<Either<Error, ReturnData>>
+  Promise<Either<TokenError | RepositoryError, ReturnData>>
 >;
 
 export const ValdiateTokenUseCase: ValdiateTokenUseCase =
@@ -47,35 +47,23 @@ export const ValdiateTokenUseCase: ValdiateTokenUseCase =
     }
 
     if (!token) {
-      const error = new Error('Token not found');
-      error.name = 'Missing token';
-
-      return left(error);
+      return left(new MissingTokenError());
     }
 
     const tokenIsValid = tokenValidator(token, secret);
 
     if (!tokenIsValid) {
-      const error = new Error('Invalid token');
-      error.name = 'Invalid token';
-
-      return left(error);
+      return left(new InvalidTokenError());
     }
 
     const tokenOrError = await tokenRepository.getOne({ jwt: token });
 
     if (isLeft(tokenOrError)) {
-      const error = new Error('Invalid token');
-      error.name = 'Invalid token';
-
-      return left(error);
+      return left(new InvalidTokenError());
     }
 
     if (tokenOrError.value.company === undefined) {
-      const error = new Error('An user token must company ....');
-      error.name = 'Invalid token';
-
-      return left(error);
+      return left(new CompanyNotSetError());
     }
 
     const userOrError = await userRepository.getOne({
@@ -83,10 +71,7 @@ export const ValdiateTokenUseCase: ValdiateTokenUseCase =
     });
 
     if (isLeft(userOrError)) {
-      const error = new Error('Invalid token');
-      error.name = 'Invalid token';
-
-      return left(error);
+      return left(new InvalidTokenError());
     }
 
     const returnData = {
