@@ -15,12 +15,9 @@ import { Either, isLeft, right } from '../../logic/Either';
 type Dependencies = {
   attendanceRepository: GenericRepository<Attendance>;
   attendanceCorrectionRepository: GenericRepository<AttendanceCorrectionRequest>;
-  employeeRepository: GenericRepository<Employee>;
 };
 
 type Properties = {
-  token: AuthToken;
-  user: User;
   attendanceId: Attendance['id'];
 };
 
@@ -31,23 +28,8 @@ export type GetAttendanceUseCase = UseCase<
 >;
 
 export const GetAttendanceUseCase: GetAttendanceUseCase =
-  ({
-    attendanceRepository,
-    employeeRepository,
-    attendanceCorrectionRepository,
-  }) =>
-  async ({ token, user, attendanceId }) => {
-    const { company } = token;
-
-    const employeeOrError = await employeeRepository.getOne({
-      company,
-      user: user.id,
-    });
-
-    if (isLeft(employeeOrError)) {
-      return employeeOrError;
-    }
-
+  ({ attendanceRepository, attendanceCorrectionRepository }) =>
+  async ({ attendanceId }) => {
     const attendanceCorrectionsOrError =
       await attendanceCorrectionRepository.getAll({
         attendance: attendanceId,

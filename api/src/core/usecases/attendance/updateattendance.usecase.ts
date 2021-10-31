@@ -18,12 +18,9 @@ export interface UpdateAttendance
 type Dependencies = {
   attendanceRepository: GenericRepository<Attendance>;
   attendanceCorrectionRepository: GenericRepository<AttendanceCorrectionRequest>;
-  employeeRepository: GenericRepository<Employee>;
 };
 
 type Properties = {
-  token: AuthToken;
-  user: User;
   attendanceData: UpdateAttendance;
 };
 
@@ -34,23 +31,8 @@ export type UpdateAttendanceUseCase = UseCase<
 >;
 
 export const UpdateAttendanceUseCase: UpdateAttendanceUseCase =
-  ({
-    attendanceRepository,
-    employeeRepository,
-    attendanceCorrectionRepository,
-  }) =>
-  async ({ token, user, attendanceData }) => {
-    const { company } = token;
-
-    const employeeOrError = await employeeRepository.getOne({
-      company,
-      user: user.id,
-    });
-
-    if (isLeft(employeeOrError)) {
-      return employeeOrError;
-    }
-
+  ({ attendanceRepository, attendanceCorrectionRepository }) =>
+  async ({ attendanceData }) => {
     const { id, time, description } = attendanceData;
 
     const attendanceOrError = await attendanceRepository.getOne({
