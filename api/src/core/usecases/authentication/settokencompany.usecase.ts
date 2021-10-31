@@ -1,16 +1,18 @@
-import { User } from '../entities/user.entity';
+import { User } from '../../entities/user.entity';
 import bcrypt from 'bcrypt';
 import {
   GenericRepository,
   RepositoryError,
-} from '../data-providers/generic.repository';
-import { UseCase, UseCaseInstance } from '../domain/usecase.entity';
-import { Either, isLeft, isRight, left, right } from '../logic/Either';
+} from '../../data-providers/generic.repository';
+import { UseCase, UseCaseInstance } from '../../domain/usecase.entity';
+import { Either, isLeft, isRight, left, right } from '../../logic/Either';
 import { GenerateAuthTokenUseCase } from './generateauthtoken.usecase';
-import { AuthToken } from '../entities/authtoken.entity';
+import { AuthToken } from '../../entities/authtoken.entity';
 import { Employee } from '.prisma/client';
-import { Company } from '../entities/company.entity';
+import { Company } from '../../entities/company.entity';
 import * as jwt from 'jsonwebtoken';
+import { InvalidTokenError, TokenError } from '../errors/token.error';
+import { InvalidCompanyError } from '../errors/authentication.error';
 
 export interface SetCompany {
   company: Company['id'];
@@ -40,7 +42,7 @@ type Properties = {
 export type SetTokenCompanyUseCase = UseCase<
   Dependencies,
   Properties,
-  Promise<Either<Error, AuthToken['jwt']>>
+  Promise<Either<RepositoryError | TokenError, AuthToken['jwt']>>
 >;
 
 export const SetTokenCompanyUseCase: SetTokenCompanyUseCase =
@@ -56,20 +58,8 @@ export const SetTokenCompanyUseCase: SetTokenCompanyUseCase =
       tokenValidator = (token, secret) => jwt.verify(token, secret);
     }
 
-    if (!token) {
-      const error = new Error('Invalid token');
-      error.name = 'Invalid token';
-
-      return left(error);
-    }
-
-    const tokenIsValid = tokenValidator(token, secret);
-
-    if (!tokenIsValid) {
-      const error = new Error('Invalid token');
-      error.name = 'Invalid token';
-
-      return left(error);
+    if (!token || tokenValidator(token, secret)) {
+      return left(new InvalidTokenError());
     }
 
     const authTokenOrError = await tokenRepository.getOne({ jwt: token });
@@ -87,11 +77,7 @@ export const SetTokenCompanyUseCase: SetTokenCompanyUseCase =
     });
 
     if (isLeft(userEmployeesOrError)) {
-      return left(
-        new Error(
-          `Cannot get employees: ${userEmployeesOrError.value.message}`,
-        ),
-      );
+      return userEmployeesOrError;
     }
 
     const userAvailableCompanies = userEmployeesOrError.value.map(
@@ -99,7 +85,7 @@ export const SetTokenCompanyUseCase: SetTokenCompanyUseCase =
     );
 
     if (!userAvailableCompanies.includes(company)) {
-      return left(new Error(`Invalid company`));
+      return left(new InvalidCompanyError());
     }
 
     const newToken = generateAuthTokenUseCase({

@@ -10,7 +10,7 @@ import { GenericRepository } from 'src/core/data-providers/generic.repository';
 import { AuthToken } from 'src/core/entities/authtoken.entity';
 import { UseCaseInstance } from 'src/core/domain/usecase.entity';
 import { User as UserEntity, UserRole } from 'src/core/entities/user.entity';
-import { ValdiateTokenUseCase } from 'src/core/usecases/validatetoken.usecase';
+import { ValdiateTokenUseCase } from 'src/core/usecases/authentication/validatetoken.usecase';
 import { ConfigService } from '@nestjs/config';
 import { isLeft } from 'src/core/logic/Either';
 

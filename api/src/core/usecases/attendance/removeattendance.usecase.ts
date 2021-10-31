@@ -4,11 +4,9 @@ import {
   RepositoryError,
 } from '../../data-providers/generic.repository';
 import { Attendance, AttendanceCorrectionRequest } from '.prisma/client';
-import { User } from '../../entities/user.entity';
 import { Either, isLeft } from '../../logic/Either';
 
 export interface RemoveAttendance {
-  id: Attendance['id'];
   description?: Attendance['description'];
 }
 
@@ -19,6 +17,7 @@ type Dependencies = {
 
 type Properties = {
   attendanceData: RemoveAttendance;
+  attendanceId: Attendance['id'];
 };
 
 export type RemoveAttendanceUseCase = UseCase<
@@ -29,11 +28,11 @@ export type RemoveAttendanceUseCase = UseCase<
 
 export const RemoveAttendanceUseCase: RemoveAttendanceUseCase =
   ({ attendanceRepository, attendanceCorrectionRepository }) =>
-  async ({ attendanceData }) => {
-    const { id, description } = attendanceData;
+  async ({ attendanceData, attendanceId }) => {
+    const { description } = attendanceData;
 
     const attendanceOrError = await attendanceRepository.getOne({
-      id,
+      id: attendanceId,
     });
 
     if (isLeft(attendanceOrError)) {

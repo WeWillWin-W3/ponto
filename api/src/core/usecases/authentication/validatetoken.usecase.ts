@@ -1,19 +1,19 @@
-import { User } from '../entities/user.entity';
+import { User } from '../../entities/user.entity';
 import {
   GenericRepository,
   RepositoryError,
-} from '../data-providers/generic.repository';
-import { UseCase } from '../domain/usecase.entity';
-import { Either, isLeft, left, right } from '../logic/Either';
-import { AuthToken } from '../entities/authtoken.entity';
+} from '../../data-providers/generic.repository';
+import { UseCase } from '../../domain/usecase.entity';
+import { Either, isLeft, left, right } from '../../logic/Either';
+import { AuthToken } from '../../entities/authtoken.entity';
 import * as jwt from 'jsonwebtoken';
 import {
   CompanyNotSetError,
   InvalidTokenError,
   MissingTokenError,
   TokenError,
-} from './errors/token.error';
-import { InvalidCompanyError } from './errors/authentication.error';
+} from '../errors/token.error';
+import { InvalidCompanyError } from '../errors/authentication.error';
 
 type TokenValidator = (token: string, secret: string) => boolean;
 

@@ -74,7 +74,7 @@ export class LoginController {
       error: err.name,
     }));
 
-    return resultOrErrorMessage;
+    return resultOrErrorMessage.value;
   }
 
   @Post('/set_company')
@@ -92,6 +92,6 @@ export class LoginController {
       error: err.name,
     }));
 
-    return resultOrErrorMessage;
+    return resultOrErrorMessage.value;
   }
 }

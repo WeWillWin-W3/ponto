@@ -1,15 +1,9 @@
 import { UseCase } from '../../domain/usecase.entity';
-import { AuthToken } from '../../entities/authtoken.entity';
 import {
   GenericRepository,
   RepositoryError,
 } from '../../data-providers/generic.repository';
-import {
-  Attendance,
-  AttendanceCorrectionRequest,
-  Employee,
-} from '.prisma/client';
-import { User } from '../../entities/user.entity';
+import { Attendance, AttendanceCorrectionRequest } from '.prisma/client';
 import { Either, isLeft, right } from '../../logic/Either';
 
 type Dependencies = {
@@ -18,18 +12,61 @@ type Dependencies = {
 };
 
 type Properties = {
-  attendanceId: Attendance['id'];
+  attendanceId?: Attendance['id'];
 };
 
 export type GetAttendanceUseCase = UseCase<
   Dependencies,
   Properties,
-  Promise<Either<RepositoryError, Attendance>>
+  Promise<Either<RepositoryError, Attendance | Attendance[]>>
 >;
 
 export const GetAttendanceUseCase: GetAttendanceUseCase =
   ({ attendanceRepository, attendanceCorrectionRepository }) =>
   async ({ attendanceId }) => {
+    const getAttendanceWithCorrections = getAttendanceWithCorrectionsFactory({
+      attendanceCorrectionRepository,
+      attendanceRepository,
+    });
+
+    if (attendanceId !== undefined) {
+      return getAttendanceWithCorrections({ attendanceId });
+    }
+
+    const attendancesOrError = await attendanceRepository.getAll();
+
+    if (isLeft(attendancesOrError)) {
+      return attendancesOrError;
+    }
+
+    const attendancesWithCorrectionsOrError = await Promise.all(
+      attendancesOrError.value.map((attendance) =>
+        getAttendanceWithCorrections({ attendanceId: attendance.id }),
+      ),
+    );
+
+    const attendancesWithCorrectionsLeftIndex =
+      attendancesWithCorrectionsOrError.findIndex((result) => isLeft(result));
+
+    if (attendancesWithCorrectionsLeftIndex) {
+      return attendancesWithCorrectionsOrError[
+        attendancesWithCorrectionsLeftIndex
+      ];
+    }
+
+    const attendancesWithCorrections = attendancesWithCorrectionsOrError.map(
+      (attendance) => attendance.value,
+    ) as Attendance[];
+
+    return right(attendancesWithCorrections);
+  };
+
+const getAttendanceWithCorrectionsFactory =
+  ({ attendanceRepository, attendanceCorrectionRepository }: Dependencies) =>
+  async ({
+    attendanceId,
+    attendance,
+  }: Properties & { attendance?: Attendance }) => {
     const attendanceCorrectionsOrError =
       await attendanceCorrectionRepository.getAll({
         attendance: attendanceId,
@@ -51,27 +88,31 @@ export const GetAttendanceUseCase: GetAttendanceUseCase =
         undefined,
       );
 
-    const attendanceOrError = await attendanceRepository.getOne({
-      id: attendanceId,
-    });
+    if (!attendance) {
+      const attendanceOrError = await attendanceRepository.getOne({
+        id: attendanceId,
+      });
 
-    if (isLeft(attendanceOrError)) {
-      return attendanceOrError;
+      if (isLeft(attendanceOrError)) {
+        return attendanceOrError;
+      }
+
+      attendance = attendanceOrError.value;
     }
 
     if (latestAcceptedAttendanceCorrection) {
       const { time: correctionTime, description: correctionDescription } =
         latestAcceptedAttendanceCorrection;
-      const { time, description, ...attendanceData } = attendanceOrError.value;
+      const { time, description, ...attendanceData } = attendance;
 
-      const attendance: Attendance = {
+      const attendanceWithCorrection: Attendance = {
         ...attendanceData,
         time: correctionTime,
         description: correctionDescription ?? description,
       };
 
-      return right(attendance);
+      return right(attendanceWithCorrection);
     }
 
-    return attendanceOrError;
+    return right(attendance);
   };

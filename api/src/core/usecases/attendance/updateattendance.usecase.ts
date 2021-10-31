@@ -1,19 +1,15 @@
 import { UseCase } from '../../domain/usecase.entity';
-import { AuthToken } from '../../entities/authtoken.entity';
 import {
   GenericRepository,
   RepositoryError,
 } from '../../data-providers/generic.repository';
-import {
-  Attendance,
-  AttendanceCorrectionRequest,
-  Employee,
-} from '.prisma/client';
-import { User } from '../../entities/user.entity';
+import { Attendance, AttendanceCorrectionRequest } from '.prisma/client';
 import { Either, isLeft } from '../../logic/Either';
 
-export interface UpdateAttendance
-  extends Pick<Attendance, 'time' | 'description' | 'id'> {}
+export interface UpdateAttendance {
+  time?: Attendance['time'] | null;
+  description?: Attendance['description'];
+}
 
 type Dependencies = {
   attendanceRepository: GenericRepository<Attendance>;
@@ -22,6 +18,7 @@ type Dependencies = {
 
 type Properties = {
   attendanceData: UpdateAttendance;
+  attendanceId: Attendance['id'];
 };
 
 export type UpdateAttendanceUseCase = UseCase<
@@ -32,11 +29,11 @@ export type UpdateAttendanceUseCase = UseCase<
 
 export const UpdateAttendanceUseCase: UpdateAttendanceUseCase =
   ({ attendanceRepository, attendanceCorrectionRepository }) =>
-  async ({ attendanceData }) => {
-    const { id, time, description } = attendanceData;
+  async ({ attendanceData, attendanceId }) => {
+    const { time, description } = attendanceData;
 
     const attendanceOrError = await attendanceRepository.getOne({
-      id,
+      id: attendanceId,
     });
 
     if (isLeft(attendanceOrError)) {

@@ -8,6 +8,10 @@ import { Attendance, Employee } from '.prisma/client';
 import { User } from '../../entities/user.entity';
 import { Either, isLeft } from '../../logic/Either';
 
+export interface RegisterAttendance {
+  description?: Attendance['description'];
+}
+
 type Dependencies = {
   attendanceRepository: GenericRepository<Attendance>;
   employeeRepository: GenericRepository<Employee>;
@@ -16,7 +20,7 @@ type Dependencies = {
 type Properties = {
   token: AuthToken;
   user: User;
-  description?: string;
+  attendanceData: RegisterAttendance;
 };
 
 export type RegisterAttendanceUseCase = UseCase<
@@ -27,8 +31,9 @@ export type RegisterAttendanceUseCase = UseCase<
 
 export const RegisterAttendanceUseCase: RegisterAttendanceUseCase =
   ({ attendanceRepository, employeeRepository }) =>
-  async ({ token, user, description }) => {
+  async ({ token, user, attendanceData }) => {
     const { company } = token;
+    const { description } = attendanceData;
 
     const employeeOrError = await employeeRepository.getOne({
       company,

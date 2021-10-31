@@ -21,7 +21,7 @@ export class InvalidUserError extends Error implements AuthenticationError {
 export class InvalidCompanyError extends Error implements AuthenticationError {
   name = 'InvalidCompanyError';
 
-  constructor(message: string) {
+  constructor(message: string = "This company are'nt valid for this") {
     super(message);
   }
 }

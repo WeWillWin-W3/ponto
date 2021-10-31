@@ -1,10 +1,10 @@
 INSERT INTO 
     "User" ("id", "username", "password", "user_role") 
 VALUES 
-    (0, 'jorge.dullius', '12345', 'admin'), 
-    (1, 'lucas.barbosa', '12345', 'basic'), 
-    (2, 'carlos.giacomini', '12345', 'basic'), 
-    (3, 'lucas.moro', '12345', 'manager');
+    (0, 'jorge.dullius', '$2b$04$f1mxXumrK0eqKBTybvk4reDxDhHkEdS8.2ZbudTJL6LlycJgIeUvK', 'admin'), 
+    (1, 'lucas.barbosa', '$2b$04$pEmj17ECtA1OxGzF.P3kNO92dAlpcJkSv3MMVmHKMus5qaP8.AUmC', 'basic'), 
+    (2, 'carlos.giacomini', '$2b$04$R6PcHWO9xUZf.lBENjTYme9bgoPPYyyE/8yDZgwQtA5323t4MiBUe', 'basic'), 
+    (3, 'lucas.moro', '$2b$04$dJYHgJsvSLV1SeWCo3StrOSHV5wLMOUGFWqorjb4wJnWIZMlzxF8i', 'manager');
 
 INSERT INTO "Company" ("id", "name") 
 VALUES 
