@@ -4,9 +4,22 @@
 Aplicação marcação de ponto e monitoramento de jornadas de trabalho
 </div>
 
-## Visão geral
+## :eye: Visão geral
+O **W3 Ponto** é uma aplicação de ponto eletrônico para empresas e funcionários que precisam ter o controle sobre o banco de horas e jornadas de trabalho.
 
-## Utilização
+Com o **W3 Ponto** é muito fácil e prático realizar o registro de pontos, funcionários, turnos de trabalho e muito mais.
+
+(...)
+
+## :books: Documentação
+
+### Diagrama de entidade e relacionamento
+![Diagrama de entidade e relacionamento](./docs/schema.png)
+
+### Diagrama de implantação
+![Diagrama de implantação](./docs/deployment-diagram.png)
+
+## :runner: Utilização
 
 ### Requisitos
 - [Docker](https://docs.docker.com/engine/install/)
