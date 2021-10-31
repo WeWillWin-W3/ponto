@@ -12,10 +12,8 @@ import {
 import { User } from '../../entities/user.entity';
 import { Either, isLeft } from '../../logic/Either';
 
-export interface RemoveAttendance {
-  id: Attendance['id'];
-  description?: Attendance['description'];
-}
+export interface UpdateAttendance
+  extends Pick<Attendance, 'time' | 'description' | 'id'> {}
 
 type Dependencies = {
   attendanceRepository: GenericRepository<Attendance>;
@@ -26,16 +24,16 @@ type Dependencies = {
 type Properties = {
   token: AuthToken;
   user: User;
-  attendanceData: RemoveAttendance;
+  attendanceData: UpdateAttendance;
 };
 
-export type RemoveAttendanceUseCase = UseCase<
+export type UpdateAttendanceUseCase = UseCase<
   Dependencies,
   Properties,
   Promise<Either<RepositoryError, AttendanceCorrectionRequest>>
 >;
 
-export const RemoveAttendanceUseCase: RemoveAttendanceUseCase =
+export const UpdateAttendanceUseCase: UpdateAttendanceUseCase =
   ({
     attendanceRepository,
     employeeRepository,
@@ -53,7 +51,7 @@ export const RemoveAttendanceUseCase: RemoveAttendanceUseCase =
       return employeeOrError;
     }
 
-    const { id, description } = attendanceData;
+    const { id, time, description } = attendanceData;
 
     const attendanceOrError = await attendanceRepository.getOne({
       id,
@@ -67,7 +65,7 @@ export const RemoveAttendanceUseCase: RemoveAttendanceUseCase =
       AttendanceCorrectionRequest,
       'id' | 'attester' | 'accepted'
     > = {
-      time: null,
+      time,
       description,
       attendance: attendanceOrError.value.id,
     };
