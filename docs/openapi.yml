@@ -48,7 +48,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: "#/components/schemas/User"
         "403":
           description: "Não autorizado"
         "500":
@@ -59,27 +59,36 @@ paths:
         - "user"
       summary: "Adicionar usuário"
       description: ""
-      parameters:
-      - in: "query"
-        name: "body"
-        description: ""
-        required: true
-        schema:
-          $ref: ""
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/CreateUser"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            "application/json":
               schema:
-                type: "string"
-                example: "Success"
+                $ref: "#/components/schemas/User"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Não foi possível processar os dados informados"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
   /user/{id}:
     get:
       operationId: "getUser"
@@ -90,27 +99,35 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-            text/plain:
-              schema:
-                type: string
+                $ref: "#/components/schemas/User"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Registro não encontrado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     put:
       operationId: "updateUser"
       tags:
@@ -120,25 +137,40 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/UpdateUser"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            "application/json":
               schema:
-                type: "string"
-                example: "mensagem"
+                $ref: "#/components/schemas/User"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Não foi possível processar os dados informados"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     delete:
       operationId: "deleteUser"
       tags:
@@ -148,25 +180,35 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            "application/json":
               schema:
-                type: "string"
-                example: "Registro deletado"
+                $ref: "#/components/schemas/User"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
   /company:
     get:
       operationId: "getCompanies"
@@ -182,31 +224,55 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Company'
+                  $ref: "#/components/schemas/Company"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     post:
       operationId: "createCompany"
       tags:
         - "company"
       summary: "Adicionar empresa"
       description: ""
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/CreateCompany"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            "application/json":
               schema:
-                type: "string"
-                example: "mensagem"
+                $ref: "#/components/schemas/Company"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Não foi possível processar os dados informados"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
   /company/{id}:
     get:
       operationId: "getCompany"
@@ -217,27 +283,35 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Company'
-            text/plain:
-              schema:
-                type: string
+                $ref: "#/components/schemas/Company"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Registro não encontrado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     put:
       operationId: "updateCompany"
       tags:
@@ -250,16 +324,20 @@ paths:
           description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/UpdateCompany"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            application/json:
               schema:
-                type: "string"
-                example: "mensagem"
+                $ref: "#/components/schemas/Company"
         "403":
           description: "Não autorizado"
         "422":
@@ -278,22 +356,33 @@ paths:
           description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            application/json:
               schema:
-                type: "string"
-                example: "Registro deletado"
+                $ref: "#/components/schemas/Company"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
   /employee:
     get:
       operationId: "getEmployees"
@@ -309,29 +398,49 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Employee'
+                  $ref: "#/components/schemas/Employee"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     post:
       operationId: "createEmployee"
       tags:
         - "employee"
       summary: "Adicionar funcionário"
       description: ""
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/CreateEmployee"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            "application/json":
               schema:
-                type: "string"
-                example: "mensagem"
+                $ref: "#/components/schemas/Employee"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
   /employee/{id}:
     get:
       operationId: "getEmployee"
@@ -342,27 +451,38 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Employee'
+                $ref: "#/components/schemas/Employee"
             text/plain:
               schema:
                 type: string
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Registro não encontrado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     put:
       operationId: "updateEmployee"
       tags:
@@ -372,25 +492,35 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            "application/json":
               schema:
-                type: "string"
-                example: "mensagem"
+                $ref: "#/components/schemas/Employee"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Não foi possível processar os dados informados"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     delete:
       operationId: "deleteEmployee"
       tags:
@@ -400,25 +530,35 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            "application/json":
               schema:
-                type: "string"
-                example: "Registro deletado"
+                $ref: "#/components/schemas/Employee"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
   /attendance:
     get:
       operationId: "getAttendances"
@@ -434,31 +574,55 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Attendance'
+                  $ref: "#/components/schemas/Attendance"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     post:
       operationId: "createAttendance"
       tags:
         - "attendance"
       summary: ""
       description: ""
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/CreateAttendance"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            "application/json":
               schema:
-                type: "string"
-                example: "mensagem"
+                $ref: "#/components/schemas/Attendance"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Não foi possível processar os dados informados"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
   /attendance/{id}:
     get:
       operationId: "getAttendance"
@@ -469,27 +633,38 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Attendance'
+                $ref: "#/components/schemas/Attendance"
             text/plain:
               schema:
                 type: string
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Registro não encontrado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     put:
       operationId: "updateAttendance"
       tags:
@@ -499,25 +674,35 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            "application/json":
               schema:
-                type: "string"
-                example: "mensagem"
+                $ref: "#/components/schemas/Attendance"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Não foi possível processar os dados informados"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     delete:
       operationId: "deleteAttendance"
       tags:
@@ -527,25 +712,35 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            "application/json":
               schema:
-                type: "string"
-                example: "Registro deletado"
+                $ref: "#/components/schemas/Attendance"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
   /attendance/validator:
     get:
       operationId: "getAttendanceValidators"
@@ -561,12 +756,35 @@ paths:
               schema:
                 type: "string"
                 example: "mensagem"
+        "403":
+          description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+        "422":
+          description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+        "500":
+          description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     post:
       operationId: "createAttendanceValidator"
       tags:
         - "attendance"
       summary: ""
       description: ""
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/CreateAttendance"
       responses:
         "200":
           description: "Operação bem sucedida"
@@ -575,6 +793,24 @@ paths:
               schema:
                 type: "string"
                 example: "mensagem"
+        "403":
+          description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+        "422":
+          description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+        "500":
+          description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
   /attendance/validator/{id}:
     get:
       operationId: "getAttendanceValidator"
@@ -585,11 +821,10 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
@@ -598,6 +833,24 @@ paths:
               schema:
                 type: "string"
                 example: "mensagem"
+        "403":
+          description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+        "422":
+          description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+        "500":
+          description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     put:
       operationId: "updateAttendanceValidator"
       tags:
@@ -607,11 +860,10 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
@@ -620,6 +872,24 @@ paths:
               schema:
                 type: "string"
                 example: "mensagem"
+        "403":
+          description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+        "422":
+          description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+        "500":
+          description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     delete:
       operationId: "deleteAttendanceValidator"
       tags:
@@ -629,11 +899,10 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
@@ -642,6 +911,24 @@ paths:
               schema:
                 type: "string"
                 example: "Registro deletado"
+        "403":
+          description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+        "422":
+          description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+        "500":
+          description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
   /workschedule:
     get:
       operationId: "getWorkSchedules"
@@ -657,31 +944,61 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/WorkSchedule'
+                  $ref: "#/components/schemas/WorkSchedule"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+        "422":
+          description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     post:
       operationId: "createWorkSchedule"
       tags:
         - "workschedule"
       summary: "Adicionar horário de trabalho"
       description: ""
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/CreateWorkSchedule"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            "application/json":
               schema:
-                type: "string"
-                example: "mensagem"
+                $ref: "#/components/schemas/WorkSchedule"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
-          description: "Não foi possível processar os dados informados"
+          description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
   /workschedule/{id}:
     get:
       operationId: "getWorkSchedule"
@@ -692,27 +1009,38 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkSchedule'
+                $ref: "#/components/schemas/WorkSchedule"
             text/plain:
               schema:
                 type: string
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
-          description: "Registro não encontrado"
+          description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     put:
       operationId: "updateWorkSchedule"
       tags:
@@ -722,25 +1050,35 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            "application/json":
               schema:
-                type: "string"
-                example: "mensagem"
+                $ref: "#/components/schemas/WorkSchedule"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
-          description: "Não foi possível processar os dados informados"
+          description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     delete:
       operationId: "deleteWorkSchedule"
       tags:
@@ -750,25 +1088,35 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
           content:
-            "text/plain":
+            "application/json":
               schema:
-                type: "string"
-                example: "Registro deletado"
+                $ref: "#/components/schemas/WorkSchedule"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
   /overtimework:
     get:
       operationId: "getOvertimeWork"
@@ -786,8 +1134,22 @@ paths:
                 example: "mensagem"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+        "422":
+          description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
   /overtimework/approve:
     get:
       operationId: "getOvertimeWorkApprovals"
@@ -805,10 +1167,22 @@ paths:
                 example: "mensagem"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
-          description: "Não foi possível processar os dados informados"
+          description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     post:
       operationId: "createOvertimeWorkApproval"
       tags:
@@ -825,10 +1199,22 @@ paths:
                 example: "mensagem"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
-          description: "Não foi possível processar os dados informados"
+          description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
   /overtimework/approve/{id}:
     get:
       operationId: "getOvertimeWorkApproval"
@@ -839,11 +1225,10 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
@@ -854,10 +1239,22 @@ paths:
                 example: "mensagem"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
-          description: "Registro não encontrado"
+          description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     put:
       operationId: "updateOvertimeWorkApproval"
       tags:
@@ -867,11 +1264,10 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
@@ -882,10 +1278,22 @@ paths:
                 example: "mensagem"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
-          description: "Não foi possível processar os dados informados"
+          description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     delete:
       operationId: "deleteOvertimeWorkApproval"
       tags:
@@ -895,11 +1303,10 @@ paths:
       parameters:
         - in: "path"
           name: "id"
-          description: "Mensagem de texto"
           required: true
           schema:
-            type: "string"
-            example: "mensagem"
+            type: "integer"
+            example: "0"
       responses:
         "200":
           description: "Operação bem sucedida"
@@ -910,17 +1317,53 @@ paths:
                 example: "Registro deletado"
         "403":
           description: "Não autorizado"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "422":
           description: "Erro ao excluir registro"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
         "500":
           description: "Erro interno"
-          
-          
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
 components:
   schemas:
+    ResponseError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+    AuthorizationError:
+      allOf:
+        - $ref: "#/components/schemas/ResponseError"
+      properties:
+        error:
+          enum:
+            - unauthorized-error
+    InternalError:
+      allOf:
+        - $ref: "#/components/schemas/ResponseError"
+      properties:
+        error:
+          enum:
+            - unauthorized-error
     CreateCompany:
       type: object
       description: ""
+      required:
+        - name
+      properties:
+        name:
+          type: string
     UpdateCompany:
       type: object
       description: ""
@@ -936,6 +1379,17 @@ components:
     CreateAttendance:
       type: object
       description: ""
+      required:
+        - employee
+        - time
+      properties:
+        time:
+          type: string
+          format: "timestamp"
+        description:
+          type: string
+        employee:
+          type: integer
     UpdateAttendance:
       type: object
       description: ""
@@ -957,6 +1411,17 @@ components:
     CreateEmployee:
       type: object
       description: ""
+      required:
+        - name
+        - user
+        - company
+      properties:
+        name:
+          type: string
+        user:
+          type: integer
+        company:
+          type: integer
     UpdateEmployee:
       type: object
       description: ""
@@ -988,10 +1453,18 @@ components:
           description: "attendance_validator_type"
           type: string
           enum:
-          - "QRCode"
+            - "QRCode"
     CreateUser:
       type: object
       description: ""
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      example:
+        username: "nome.sobrenome"
+        password: "123456"
     UpdateUser:
       type: object
       description: ""
@@ -1012,12 +1485,19 @@ components:
           type: string
           description: "user_role"
           enum:
-          - "basic"
-          - "manager"
-          - "admin"
+            - "basic"
+            - "manager"
+            - "admin"
     CreateWorkSchedule:
       type: object
       description: ""
+      required:
+        - workable
+      properties:
+        description:
+          type: string
+        workable:
+          type: boolean
     UpdateWorkSchedule:
       type: object
       description: ""
@@ -1123,9 +1603,10 @@ components:
         private_key:
           type: string
   securitySchemes:
-    defaultAuth:
+    authToken:
       description: ""
       type: "http"
-      scheme: "basic"
+      scheme: "bearer"
+      bearerFormat: "JWT"
 security:
-  - defaultAuth: []
+  - authToken: []
