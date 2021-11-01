@@ -43,7 +43,7 @@ Para garantir maior disponibilidade, utilizou-se a opção de `scaling` para exe
 Falando especificamente a nível de implementação, recorremos ao conceito [either](https://blog.logrocket.com/javascript-either-monad-error-handling/), muito conhecido no paradigma de programação funcional, para tratar erros como valores em vez de exceptions, evitando assim, quebras no fluxo principal de execução da aplicação.
 
 ### Nomeações
-A aplicação faz uso de uma técnica de nomeação a partir de tabela hash de endereços IP (IP hash do nginx). Quando uma requisição é feita para a sistema, o nginx irá selecionar um dos 4 nós disponíveis e irá armazenar a preferência em uma tabela de hashs. Requests seguintes a partir do mesmo IP serão enviadas ao mesmo nó (o motivo dessa escolha é explicado em [sincronização e consistência] (#sincronização-e-consistência)).
+A aplicação faz uso de uma técnica de nomeação a partir de tabela hash de endereços IP (IP hash do nginx). Quando uma requisição é feita para a sistema, o nginx irá selecionar um dos 4 nós disponíveis e irá armazenar a preferência em uma tabela de hashs. Requests seguintes a partir do mesmo IP serão enviadas ao mesmo nó (o motivo dessa escolha é explicado em [sincronização e consistência](#sincronização-e-consistência)).
 
 Além desse tipo de nomeação, a aplicação utiliza o padrão REST para servir recursos na web, tais recursos são nomeados seguindo a convensão empregada pelo REST. Por exemplo, podemos obter um usuário específico a partir do endereço https://localhost/v1/users/1.
 
@@ -52,7 +52,7 @@ Na solução construída existem 2 recursos que precisam de sincronização:
 
 1. Banco de dados: o banco de dados é sincronizado automaticamente, pois a aplicação faz uso de apenas uma instância para persistência.
 
-2. Tokens de acesso JWT: os tokens de acesso gerados para um usuário ficam dependentes do nó em que foram geradas, pois ficam armazenadas em memória. Dessa forma, em teoria, essa informação precisaria ser sincronizada com as outras instâncias da aplicação. Na prática, estamos utilizando o Nginx como load balancer para redirecionar requests de um IP sempre para o mesmo nó, eliminando a necessidade de sincronização entre os nós da aplicação. Uma outra abordagem seria utilizar um banco de dados como o [redis](https://redis.io/) para armazenar e centralizar os tokens.
+2. Tokens de acesso JWT: os tokens de acesso gerados para um usuário ficam dependentes do nó em que foram geradas, pois ficam armazenadas em memória. Dessa forma, em teoria, essa informação precisaria ser sincronizada com as outras instâncias da aplicação. Na prática, estamos utilizando o Nginx como load balancer para redirecionar requests de um IP sempre para o mesmo nó, eliminando a necessidade de sincronização entre os nós da aplicação. Uma outra abordagem seria utilizar alguma tecnologia como [redis](https://redis.io/) para armazenar e centralizar os tokens de acesso dos usuários.
 
 ### Replicação
 Como comentado no tópico [tolerância a falha](#tolerância-a-falha), a aplicação está sendo escalada para 4 nós/constainers a partir do `docker-compose scale`. Uma maneira simples e interessante de realizar a replicação de nós.
