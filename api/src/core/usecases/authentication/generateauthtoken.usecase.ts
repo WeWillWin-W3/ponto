@@ -1,7 +1,7 @@
 import { User } from '.prisma/client';
 import { randomUUID } from 'crypto';
-import { UseCase, UseCaseInstance } from '../domain/usecase.entity';
-import { AuthToken, AuthTokenClaims } from '../entities/authtoken.entity';
+import { UseCase, UseCaseInstance } from '../../domain/usecase.entity';
+import { AuthToken, AuthTokenClaims } from '../../entities/authtoken.entity';
 import { GenerateJWTUseCase } from './generatejwt.usecase';
 
 type Dependencies = {

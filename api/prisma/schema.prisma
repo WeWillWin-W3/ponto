@@ -23,7 +23,7 @@ model AttendanceCorrectionRequest {
   time        DateTime?   @db.Timestamp(6)
   attendance  Int?
   attester    Int?
-  accepted    Boolean?
+  accepted    Boolean?    @default(false)
   description String?     @db.VarChar
   created_at  DateTime    @default(now()) @db.Timestamp(6)
   Attendance  Attendance? @relation(fields: [attendance], references: [id], onDelete: NoAction, onUpdate: NoAction)

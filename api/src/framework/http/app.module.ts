@@ -8,8 +8,15 @@ import { PrismaService } from '../data-providers/prisma.service';
 import { AuthenticateMiddleware } from './middlewares/authenticate.middleware';
 import { AuthenticateModule } from './modules/authentication/authentication.module';
 import { CrudModule } from './modules/crud/crud.module';
+import { CustomCrudModule } from './modules/custom-crud/customcrud.module';
+
 @Module({
-  imports: [CrudModule, AuthenticateModule, ConfigModule.forRoot()],
+  imports: [
+    CrudModule,
+    AuthenticateModule,
+    CustomCrudModule,
+    ConfigModule.forRoot(),
+  ],
   providers: [
     PrismaService,
     {

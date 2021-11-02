@@ -24,9 +24,9 @@ CREATE TABLE "Attendance" (
 CREATE TABLE "AttendanceCorrectionRequest" (
   "id" serial PRIMARY KEY,
   "time" timestamp,
-  "attendance" int,
+  "attendance" int NOT NULL,
   "attester" int,
-  "accepted" boolean,
+  "accepted" boolean NOT NULL DEFAULT TRUE,
   "description" varchar,
   "created_at" timestamp NOT NULL DEFAULT (now())
 );

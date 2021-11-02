@@ -1,6 +1,11 @@
 table Employee {
+<<<<<<< HEAD
+  id int [pk]
+  user int [ref: > User.id]
+=======
   id int [pk, increment]
   user int [not null, ref: > User.id]
+>>>>>>> 9c024813d1dd2bf399f15842f199aa217f725d01
   company int [not null, ref: > Company.id]
 }
 
@@ -40,6 +45,7 @@ table Company {
 
 table User {
   id int [pk, increment]
+  name varchar [not null]
   email varchar [not null, unique]
   password varchar [not null]
   user_role user_role [not null]

@@ -1,17 +1,26 @@
 import { Body, Controller, Inject, Post, Req } from '@nestjs/common';
-import { Employee, User } from '@prisma/client';
+import { Employee } from '@prisma/client';
 import { IsNumber, IsString } from 'class-validator';
 import { GenericRepository } from 'src/core/data-providers/generic.repository';
-import { isLeft } from 'src/core/logic/Either';
-import { GenerateAuthTokenUseCase } from 'src/core/usecases/generateauthtoken.usecase';
+import { mapLeft } from 'src/core/logic/Either';
+import { GenerateAuthTokenUseCase } from 'src/core/usecases/authentication/generateauthtoken.usecase';
 import { AuthToken } from 'src/core/entities/authtoken.entity';
 import { UseCaseInstance } from 'src/core/domain/usecase.entity';
-import { GenerateJWTUseCase } from 'src/core/usecases/generatejwt.usecase';
+import { GenerateJWTUseCase } from 'src/core/usecases/authentication/generatejwt.usecase';
 import { Company } from 'src/core/entities/company.entity';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
+import {
+  AuthenticateUser,
+  AuthenticateUserUseCase,
+} from 'src/core/usecases/authentication/authenticateuser.usecase';
+import { User } from 'src/core/entities/user.entity';
+import {
+  SetCompany,
+  SetTokenCompanyUseCase,
+} from 'src/core/usecases/authentication/settokencompany.usecase';
 
-class LoginDTO {
+class LoginDTO implements AuthenticateUser {
   @IsString()
   email: string;
 
@@ -19,14 +28,15 @@ class LoginDTO {
   password: string;
 }
 
-class SetCompanyDTO {
+class SetCompanyDTO implements SetCompany {
   @IsNumber()
   company: Company['id'];
 }
 
 @Controller('/login')
 export class LoginController {
-  private generateAuthToken: UseCaseInstance<GenerateAuthTokenUseCase>;
+  private authenticateUser: UseCaseInstance<AuthenticateUserUseCase>;
+  private setTokenCompany: UseCaseInstance<SetTokenCompanyUseCase>;
 
   constructor(
     @Inject('UserRepository') private userRepository: GenericRepository<User>,
@@ -38,52 +48,33 @@ export class LoginController {
   ) {
     const secret = this.configService.get<string>('JWT_SECRET');
     const generateJWTUseCase = GenerateJWTUseCase({ secret });
+    const generateAuthToken = GenerateAuthTokenUseCase({ generateJWTUseCase });
 
-    this.generateAuthToken = GenerateAuthTokenUseCase({ generateJWTUseCase });
+    this.authenticateUser = AuthenticateUserUseCase({
+      generateAuthTokenUseCase: generateAuthToken,
+      userRepository: this.userRepository,
+      tokenRepository: this.tokenRepository,
+      employeeRepository: this.employeeRepository,
+    });
+
+    this.setTokenCompany = SetTokenCompanyUseCase({
+      employeeRepository: this.employeeRepository,
+      tokenRepository: this.tokenRepository,
+      generateAuthTokenUseCase: generateAuthToken,
+      secret,
+    });
   }
 
   @Post()
   async login(@Body() loginDto: LoginDTO) {
-    const { email, password: plainPassword } = loginDto;
+    const resultOrError = await this.authenticateUser({ userData: loginDto });
 
-    const userOrError = await this.userRepository.getOne({ email });
+    const resultOrErrorMessage = mapLeft(resultOrError, (err) => ({
+      message: err.message,
+      error: err.name,
+    }));
 
-    if (isLeft(userOrError)) {
-      return { message: 'User not exists' };
-    }
-
-    // TODO: bcrypt password
-    // if (!bcrypt.compare(plainPassword, userOrError.value.password))
-    if (plainPassword !== userOrError.value.password) {
-      return { message: 'Wrong password' };
-    }
-
-    const token = this.generateAuthToken({ userId: userOrError.value.id });
-
-    // TODO: specific tokenRepository
-    const tokenOrError = await this.tokenRepository.create(token);
-
-    if (isLeft(tokenOrError)) {
-      return {
-        message: `Cannot create token: ${tokenOrError.value.message}`,
-      };
-    }
-
-    const userEmployeesOrError = await this.employeeRepository.getAll({
-      user: tokenOrError.value.subject,
-    });
-
-    if (isLeft(userEmployeesOrError)) {
-      return {
-        message: `Cannot get employees: ${userEmployeesOrError.value.message}`,
-      };
-    }
-
-    const userAvailableCompanies = userEmployeesOrError.value.map(
-      (employee) => employee.company,
-    );
-
-    return { token: tokenOrError.value.jwt, userAvailableCompanies };
+    return resultOrErrorMessage.value;
   }
 
   @Post('/set_company')
@@ -91,47 +82,16 @@ export class LoginController {
     const { authorization } = req.headers;
     const token = authorization?.split('Bearer ')?.[1];
 
-    if (!token) {
-      return { error: 'Invalid token', message: 'Invalid token' };
-    }
-
-    const authTokenOrError = await this.tokenRepository.getOne({ jwt: token });
-
-    if (isLeft(authTokenOrError)) {
-      return { error: 'Invalid token', message: 'Invalid token' };
-    }
-
-    const authToken = authTokenOrError.value;
-
-    const { company } = setCompanyDTO;
-
-    const userEmployeesOrError = await this.employeeRepository.getAll({
-      user: authToken.subject,
+    const resultOrError = await this.setTokenCompany({
+      token,
+      companyInfo: setCompanyDTO,
     });
 
-    if (isLeft(userEmployeesOrError)) {
-      return {
-        message: `Cannot get employees: ${userEmployeesOrError.value.message}`,
-      };
-    }
+    const resultOrErrorMessage = mapLeft(resultOrError, (err) => ({
+      message: err.message,
+      error: err.name,
+    }));
 
-    const userAvailableCompanies = userEmployeesOrError.value.map(
-      (employee) => employee.company,
-    );
-
-    if (!userAvailableCompanies.includes(company)) {
-      return {
-        message: `Invalid company`,
-      };
-    }
-
-    const newToken = this.generateAuthToken({
-      userId: authToken.subject,
-      company,
-    });
-
-    await this.tokenRepository.updateOne({ jwtId: authToken.jwtId }, newToken);
-
-    return { token: newToken.jwt };
+    return resultOrErrorMessage.value;
   }
 }

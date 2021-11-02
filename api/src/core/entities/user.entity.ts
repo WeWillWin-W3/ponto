@@ -1,12 +1,9 @@
-enum user_role {
-  basic,
-  manager,
-  admin,
-}
+export type UserRole = 'basic' | 'manager' | 'admin';
 
 export interface User {
   id: number;
-  username: string;
+  name: string;
+  email: string;
   password: string;
-  user_role: user_role;
+  user_role: UserRole;
 }

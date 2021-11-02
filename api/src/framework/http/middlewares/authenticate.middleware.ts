@@ -1,4 +1,3 @@
-import { User as UserModel, user_role } from '@prisma/client';
 import {
   createParamDecorator,
   ExecutionContext,
@@ -8,10 +7,14 @@ import {
 } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { GenericRepository } from 'src/core/data-providers/generic.repository';
-import { isLeft } from 'src/core/logic/Either';
 import { AuthToken } from 'src/core/entities/authtoken.entity';
+import { UseCaseInstance } from 'src/core/domain/usecase.entity';
+import { User as UserEntity, UserRole } from 'src/core/entities/user.entity';
+import { ValdiateTokenUseCase } from 'src/core/usecases/authentication/validatetoken.usecase';
+import { ConfigService } from '@nestjs/config';
+import { isLeft } from 'src/core/logic/Either';
 
-export const UserRolePriority: Record<user_role, number> = {
+export const UserRolePriority: Record<UserRole, number> = {
   admin: 2,
   manager: 1,
   basic: 0,
@@ -19,44 +22,43 @@ export const UserRolePriority: Record<user_role, number> = {
 
 @Injectable()
 export class AuthenticateMiddleware implements NestMiddleware {
+  private validateTokenUseCase: UseCaseInstance<ValdiateTokenUseCase>;
+
   constructor(
     @Inject('TokenRepository')
     private tokenRepository: GenericRepository<AuthToken>,
     @Inject('UserRepository')
-    private userRepository: GenericRepository<UserModel>,
-  ) {}
+    private userRepository: GenericRepository<UserEntity>,
+    private configService: ConfigService,
+  ) {
+    const secret = this.configService.get<string>('JWT_SECRET');
+
+    this.validateTokenUseCase = ValdiateTokenUseCase({
+      tokenRepository: this.tokenRepository,
+      userRepository: this.userRepository,
+      secret,
+    });
+  }
 
   async use(req: Request, res: Response, next: NextFunction) {
     const { authorization } = req.headers;
     const token = authorization?.split('Bearer ')?.[1];
 
-    if (!token) {
-      return res.json({ error: 'Invalid token', message: 'Invalid token' });
-    }
+    const tokenValidationResult = await this.validateTokenUseCase({ token });
 
-    const tokenOrError = await this.tokenRepository.getOne({ jwt: token });
+    if (isLeft(tokenValidationResult)) {
+      const { name: error, message } = tokenValidationResult.value;
 
-    if (isLeft(tokenOrError)) {
-      return res.json({ error: 'Invalid token', message: 'Invalid token' });
-    }
-
-    if (tokenOrError.value.company === undefined) {
       return res.json({
-        error: 'Undefined company',
-        message: 'An user token must company ....',
+        error,
+        message,
       });
     }
 
-    const userOrError = await this.userRepository.getOne({
-      id: tokenOrError.value.subject,
-    });
+    const { authToken, user } = tokenValidationResult.value;
 
-    if (isLeft(userOrError)) {
-      return res.json({ error: 'Invalid token', message: 'Invalid token' });
-    }
-
-    req['authToken'] = tokenOrError.value;
-    req['user'] = userOrError.value;
+    req['authToken'] = authToken;
+    req['user'] = user;
 
     return next();
   }
