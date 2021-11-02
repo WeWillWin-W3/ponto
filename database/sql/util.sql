@@ -37,7 +37,7 @@ CREATE VIEW "AttendanceIntervals" AS (
 );
 
 CREATE VIEW "EmployeeTimeRanges" AS (
-	SELECT wse.employee, ws.workable, wstr.repeat_days, tr.start, tr.end 
+	SELECT wse.employee, ws.workable, wstr.repeat_days, tr.start, tr.end, ws.description
 	FROM "WorkScheduleEmployee" as wse 
 	JOIN "WorkSchedule" as ws ON ws.id = wse.work_schedule
 	JOIN "WorkScheduleTimeRange" as wstr ON wstr.work_schedule = ws.id
@@ -83,7 +83,7 @@ CREATE VIEW "CompensatoryTime" AS (
 			SELECT 
 			CASE WHEN timerange_workable THEN ABS(timerange_end - timerange_start) ELSE '0'::interval END AS matching_timerange_hours,
 			ABS(end_attendance_time - start_attendance_time) AS worked_hours,
-			* FROM "MatchingTimeRangeByAttendancePair"
+			* FROM "ClosestTimeRangeByAttendancePair"
 		) as inner_table
 	) as inner_table
 );

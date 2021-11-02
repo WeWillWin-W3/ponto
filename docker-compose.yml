@@ -1,29 +1,58 @@
-version: '3.1'
+version: "3.1"
 
 services:
+  api-gateway:
+    container_name: ponto-api-gateway
+    image: nginx
+    volumes:
+      - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf:z
+      - ./infra/certificates:/etc/nginx/certificates:z
+      - ./infra/nginx/log:/var/log/nginx:z
+      - ./docs/openapi.yml:/openapi.yml:z
+    ports:
+      - "443:443"
+    depends_on:
+      - api
+
+  api:
+    # container_name duplicated when scale
+    # container_name: "ponto-api"
+    build: ./api
+    env_file:
+      - ./api/.env
+    depends_on:
+      - database
+    # docker-compose up --scale api=4
+    # deploy:
+    #   replicas: 4
 
   database:
     container_name: ponto-database
     image: postgres:13
     ports:
       - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ponto
+    env_file:
+      - ./database/.env
     volumes:
       - "postgres_data:/var/lib/postgresql/data"
-      - "./database/sql:/docker-entrypoint-initdb.d/sql"
-      - "./database/setup.sh:/docker-entrypoint-initdb.d/setup.sh"
+      - "./database/sql:/docker-entrypoint-initdb.d/sql:z"
+      - "./database/setup.sh:/docker-entrypoint-initdb.d/setup.sh:z"
+
+  swagger:
+    container_name: ponto-swagger-ui
+    image: swaggerapi/swagger-ui
+    environment:
+      - API_URL=https://localhost/docs/v1/openapi.yml
 
   pgadmin:
     container_name: ponto-pgadmin
     image: dpage/pgadmin4
     ports:
       - "8080:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: postgres@email.com
-      PGADMIN_DEFAULT_PASSWORD: postgres
+    env_file:
+      - ./database/.env
+    logging:
+      driver: none
 
 volumes:
   postgres_data:

@@ -1,28 +1,33 @@
 table Employee {
+<<<<<<< HEAD
   id int [pk]
-  name varchar [not null]
+  user int [ref: > User.id]
+=======
+  id int [pk, increment]
   user int [not null, ref: > User.id]
+>>>>>>> 9c024813d1dd2bf399f15842f199aa217f725d01
   company int [not null, ref: > Company.id]
 }
 
 table Attendance {
-  id int [pk]
+  id int [pk, increment]
   time timestamp [not null]
   description varchar
   employee int [not null, ref: > Employee.id]
 }
 
 table AttendanceCorrectionRequest {
-  id int [pk]
+  id int [pk, increment]
   time timestamp
   attendance int [ref: > Attendance.id]
   attester int [ref: > User.id]
   accepted boolean
   description varchar
+  created_at timestamp [not null, default: `now()`]
 }
 
 table OvertimeWorkApproval {
-  id int [pk]
+  id int [pk, increment]
   start timestamp [not null]
   end timestamp [not null]
   approver int [not null, ref: > User.id]
@@ -34,13 +39,14 @@ table ManagerAttendanceSubmission {
 }
 
 table Company {
-  id int [pk]
+  id int [pk, increment]
   name varchar [not null]
 }
 
 table User {
-  id int [pk]
-  username varchar [not null]
+  id int [pk, increment]
+  name varchar [not null]
+  email varchar [not null, unique]
   password varchar [not null]
   user_role user_role [not null]
 }
@@ -51,7 +57,7 @@ table WorkScheduleEmployee {
 }
 
 table WorkSchedule {
-  id int [pk]
+  id int [pk, increment]
   description varchar
   workable boolean [not null]
 }
@@ -63,7 +69,7 @@ table WorkScheduleTimeRange {
 }
 
 table TimeRange {
-  id int [pk]
+  id int [pk, increment]
   start time [not null]
   end time [not null]
 }
@@ -76,7 +82,7 @@ table QRCode {
 }
 
 table QRCodeGenerator {
-  id int [pk]
+  id int [pk, increment]
   name varchar
   private_key varchar [not null]
 }
@@ -87,7 +93,7 @@ table AttendanceValidatorAttendance {
 }
 
 table AttendanceValidator {
-  id int [pk]
+  id int [pk, increment]
   name varchar
   type attendance_validator_type [not null]
 }
