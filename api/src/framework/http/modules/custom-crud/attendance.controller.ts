@@ -29,6 +29,7 @@ import {
 } from 'src/core/usecases/attendance/updateattendance.usecase';
 import { GetAttendanceUseCase } from 'src/core/usecases/attendance/getattendance.usecase';
 import { RegisterAttendance } from 'src/core/usecases/attendance/registerattendance.usecase';
+import { Token, User } from '../../middlewares/authenticate.middleware';
 
 class RegisterAttendanceDTO implements RegisterAttendance {
   @IsString()
@@ -37,6 +38,7 @@ class RegisterAttendanceDTO implements RegisterAttendance {
 
 class RemoveAttendanceDTO implements RemoveAttendance {
   @IsString()
+  @IsOptional()
   description: RemoveAttendance['description'];
 }
 
@@ -88,10 +90,9 @@ export class AttendanceController {
   @Post()
   async create(
     @Body() registerAttendanceDTO: RegisterAttendanceDTO,
-    @Req() req,
+    @User() user,
+    @Token() token,
   ) {
-    const { user, token } = req;
-
     const registerResultOrError = await this.registerAttendanceUseCase({
       user,
       token,
@@ -109,10 +110,10 @@ export class AttendanceController {
   @Get('/:id')
   async getOne(
     @Param('id')
-    attendanceId: Attendance['id'],
+    attendanceId: string,
   ) {
     const getResultOrError = await this.getAttendanceUseCase({
-      attendanceId,
+      attendanceId: Number(attendanceId),
     });
 
     const getResultOrErrorResponse = mapLeft(
@@ -138,13 +139,13 @@ export class AttendanceController {
   @Delete('/:id')
   async deleteOne(
     @Param('id')
-    attendanceId: Attendance['id'],
+    attendanceId: string,
     @Body()
     removeAttendanceDto: RemoveAttendanceDTO,
   ) {
     const removeResultOrError = await this.removeAttendanceUseCase({
       attendanceData: removeAttendanceDto,
-      attendanceId,
+      attendanceId: Number(attendanceId),
     });
 
     const removeResultOrErrorResponse = mapLeft(

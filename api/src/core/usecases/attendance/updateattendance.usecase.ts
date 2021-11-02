@@ -42,7 +42,7 @@ export const UpdateAttendanceUseCase: UpdateAttendanceUseCase =
 
     const attendanceCorrectionData: Omit<
       AttendanceCorrectionRequest,
-      'id' | 'attester' | 'accepted'
+      'id' | 'attester' | 'accepted' | 'created_at'
     > = {
       time,
       description,

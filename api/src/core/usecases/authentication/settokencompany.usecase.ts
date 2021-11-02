@@ -55,10 +55,16 @@ export const SetTokenCompanyUseCase: SetTokenCompanyUseCase =
   }) =>
   async ({ companyInfo, token }) => {
     if (!tokenValidator) {
-      tokenValidator = (token, secret) => jwt.verify(token, secret);
+      tokenValidator = (token, secret) => {
+        try {
+          return !!jwt.verify(token, secret);
+        } catch (err) {
+          return false;
+        }
+      };
     }
 
-    if (!token || tokenValidator(token, secret)) {
+    if (!token || !tokenValidator(token, secret)) {
       return left(new InvalidTokenError());
     }
 

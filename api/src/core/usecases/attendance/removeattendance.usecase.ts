@@ -41,7 +41,7 @@ export const RemoveAttendanceUseCase: RemoveAttendanceUseCase =
 
     const attendanceCorrectionData: Omit<
       AttendanceCorrectionRequest,
-      'id' | 'attester' | 'accepted'
+      'id' | 'attester' | 'accepted' | 'created_at'
     > = {
       time: null,
       description,

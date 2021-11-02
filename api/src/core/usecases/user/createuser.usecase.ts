@@ -6,7 +6,10 @@ import {
 } from '../../data-providers/generic.repository';
 import { UseCase } from '../../domain/usecase.entity';
 import { Either, isRight, left, mapRight } from '../../logic/Either';
-import { DuplicatedEmailError } from '../errors/authentication.error';
+import {
+  AuthenticationError,
+  DuplicatedEmailError,
+} from '../errors/authentication.error';
 
 export interface CreateUser {
   name: string;
@@ -30,14 +33,10 @@ type Properties = {
   userData: CreateUser;
 };
 
-interface UserValidationError {
-  message: string;
-}
-
 export type CreateUserUseCase = UseCase<
   Dependencies,
   Properties,
-  Promise<Either<UserValidationError | RepositoryError, Omit<User, 'password'>>>
+  Promise<Either<AuthenticationError | RepositoryError, Omit<User, 'password'>>>
 >;
 
 export const CreateUserUseCase: CreateUserUseCase =
@@ -77,6 +76,7 @@ export const CreateUserUseCase: CreateUserUseCase =
     const user_role = userHasAdminRole ? 'admin' : 'basic';
 
     const user: Omit<User, 'id'> = {
+      name: userData.name,
       email: userData.email,
       password: encryptedPassword,
       user_role,

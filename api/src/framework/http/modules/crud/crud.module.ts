@@ -8,6 +8,9 @@ import {
   UpdateAttendanceDto,
 } from './dtos/attendance.dto';
 import { CreateEmployeeDto, UpdateEmployeeDto } from './dtos/employee.dto';
+import { CreateUserDto, UpdateUserDto } from './dtos/user.dto';
+import { UseCaseInstance } from 'src/core/domain/usecase.entity';
+import { CreateUserUseCase } from 'src/core/usecases/user/createuser.usecase';
 
 export const CrudModule = CrudModuleFactory([
   CrudModuleController({
@@ -23,8 +26,8 @@ export const CrudModule = CrudModuleFactory([
     primaryKey: 'id',
     primaryKeyTransformer: numberTransformer,
     entityName: 'User',
-    CreateDto: CreateEmployeeDto,
-    UpdateDto: UpdateEmployeeDto,
+    CreateDto: CreateUserDto,
+    UpdateDto: UpdateUserDto,
     customActions: {
       getAll: (deps) => async (req, res) => {
         const { genericRepository } = deps;
@@ -41,7 +44,7 @@ export const CrudModule = CrudModuleFactory([
           (users) => users.map(({ password, ...userData }) => userData),
         );
 
-        return res.json(usersWithoutPasswordOrErrorResponse);
+        return res.json(usersWithoutPasswordOrErrorResponse.value);
       },
       getOne: (deps) => async (req, res) => {
         const { genericRepository } = deps;
@@ -59,20 +62,79 @@ export const CrudModule = CrudModuleFactory([
           ({ password, ...userData }) => userData,
         );
 
-        return res.json(userWithoutPasswordOrErrorResponse);
+        return res.json(userWithoutPasswordOrErrorResponse.value);
+      },
+      update: (deps) => async (req, res) => {
+        const { genericRepository } = deps;
+        const userRepository = genericRepository as GenericRepository<User>;
+        const { id } = req.params;
+        const { name } = req.body;
+
+        const userOrError = await userRepository.updateOne(
+          { id: Number(id) },
+          { name },
+        );
+
+        const userOrErrorResponse = mapLeft(
+          userOrError,
+          ({ message, name: error }) => ({ message, error }),
+        );
+
+        const userWithoutPasswordOrErrorResponse = mapRight(
+          userOrErrorResponse,
+          ({ password, ...userData }) => userData,
+        );
+
+        return res.json(userWithoutPasswordOrErrorResponse.value);
+      },
+      deleteOne: (deps) => async (req, res) => {
+        const { genericRepository } = deps;
+        const userRepository = genericRepository as GenericRepository<User>;
+        const { id } = req.params;
+        const userOrError = await userRepository.deleteOne({ id: Number(id) });
+
+        const userOrErrorResponse = mapLeft(
+          userOrError,
+          ({ message, name: error }) => ({ message, error }),
+        );
+
+        const userWithoutPasswordOrErrorResponse = mapRight(
+          userOrErrorResponse,
+          ({ password, ...userData }) => userData,
+        );
+
+        return res.json(userWithoutPasswordOrErrorResponse.value);
+      },
+      create: (deps) => {
+        const { genericRepository } = deps;
+        const userRepository = genericRepository as GenericRepository<User>;
+        const createUserUseCase: UseCaseInstance<CreateUserUseCase> =
+          CreateUserUseCase({
+            userRepository,
+          });
+
+        return async (req, res) => {
+          const { name, email, password } = req.body;
+          const createdUserOrError = await createUserUseCase({
+            userData: {
+              name,
+              email,
+              password,
+            },
+          });
+
+          const createdUserOrErrorResponse = mapLeft(
+            createdUserOrError,
+            ({ message, name: error }) => ({ message, error }),
+          );
+
+          return res.json(createdUserOrErrorResponse.value);
+        };
       },
     },
     authorizationLevel: {
       getAll: 'admin',
     },
-  }),
-  CrudModuleController({
-    route: '/attendances',
-    primaryKey: 'id',
-    primaryKeyTransformer: numberTransformer,
-    entityName: 'Attendance',
-    CreateDto: CreateAttendanceDto,
-    UpdateDto: UpdateAttendanceDto,
   }),
   CrudModuleController({
     route: '/companies',

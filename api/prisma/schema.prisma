@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Attendance {
-  id                            Int                             @id
+  id                            Int                             @id @default(autoincrement())
   time                          DateTime                        @db.Timestamp(6)
   description                   String?                         @db.VarChar
   employee                      Int
@@ -19,19 +19,19 @@ model Attendance {
 }
 
 model AttendanceCorrectionRequest {
-  id          Int         @id
+  id          Int         @id @default(autoincrement())
   time        DateTime?   @db.Timestamp(6)
   attendance  Int?
   attester    Int?
-  accepted    Boolean?
+  accepted    Boolean?    @default(false)
   description String?     @db.VarChar
   created_at  DateTime    @default(now()) @db.Timestamp(6)
   Attendance  Attendance? @relation(fields: [attendance], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  User        User?       @relation(fields: [attester], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User        User?       @relation(fields: [attester], references: [id], onUpdate: NoAction)
 }
 
 model AttendanceValidator {
-  id                            Int                             @id
+  id                            Int                             @id @default(autoincrement())
   name                          String?                         @db.VarChar
   type                          attendance_validator_type
   AttendanceValidatorAttendance AttendanceValidatorAttendance[]
@@ -48,18 +48,17 @@ model AttendanceValidatorAttendance {
 }
 
 model Company {
-  id       Int        @id
+  id       Int        @id @default(autoincrement())
   name     String     @db.VarChar
   Employee Employee[]
 }
 
 model Employee {
-  id                   Int                    @id
-  name                 String                 @db.VarChar
-  user                 Int
+  id                   Int                    @id @default(autoincrement())
+  user                 Int?
   company              Int
   Company              Company                @relation(fields: [company], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  User                 User                   @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User                 User?                  @relation(fields: [user], references: [id], onUpdate: NoAction)
   Attendance           Attendance[]
   WorkScheduleEmployee WorkScheduleEmployee[]
 }
@@ -68,17 +67,17 @@ model ManagerAttendanceSubmission {
   attendance Int
   manager    Int
   Attendance Attendance @relation(fields: [attendance], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  User       User       @relation(fields: [manager], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User       User       @relation(fields: [manager], references: [id], onDelete: SetNull, onUpdate: NoAction)
 
   @@id([attendance, manager])
 }
 
 model OvertimeWorkApproval {
-  id       Int      @id
+  id       Int      @id @default(autoincrement())
   start    DateTime @db.Timestamp(6)
   end      DateTime @db.Timestamp(6)
   approver Int
-  User     User     @relation(fields: [approver], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User     User     @relation(fields: [approver], references: [id], onDelete: SetNull, onUpdate: NoAction)
 }
 
 model QRCode {
@@ -93,24 +92,25 @@ model QRCode {
 }
 
 model QRCodeGenerator {
-  id          Int      @id
+  id          Int      @id @default(autoincrement())
   name        String?  @db.VarChar
   private_key String   @db.VarChar
   QRCode      QRCode[]
 }
 
 model TimeRange {
-  id                    Int                     @id
+  id                    Int                     @id @default(autoincrement())
   start                 DateTime                @db.Time(6)
   end                   DateTime                @db.Time(6)
   WorkScheduleTimeRange WorkScheduleTimeRange[]
 }
 
 model User {
-  id                          Int                           @id
-  username                    String                        @db.VarChar
+  id                          Int                           @id @default(autoincrement())
+  email                       String                        @unique @db.VarChar
   password                    String                        @db.VarChar
-  user_role                   user_role
+  name                        String                        @db.VarChar
+  user_role                   user_role                     @default(basic)
   AttendanceCorrectionRequest AttendanceCorrectionRequest[]
   Employee                    Employee[]
   ManagerAttendanceSubmission ManagerAttendanceSubmission[]
@@ -118,7 +118,7 @@ model User {
 }
 
 model WorkSchedule {
-  id                    Int                     @id
+  id                    Int                     @id @default(autoincrement())
   description           String?                 @db.VarChar
   workable              Boolean
   WorkScheduleEmployee  WorkScheduleEmployee[]

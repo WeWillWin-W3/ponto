@@ -1,11 +1,11 @@
 import { User } from '../../entities/user.entity';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import {
   GenericRepository,
   RepositoryError,
 } from '../../data-providers/generic.repository';
 import { UseCase, UseCaseInstance } from '../../domain/usecase.entity';
-import { Either, isLeft, isRight, left, right } from '../../logic/Either';
+import { Either, isLeft, left, right } from '../../logic/Either';
 import { GenerateAuthTokenUseCase } from './generateauthtoken.usecase';
 import { AuthToken } from '../../entities/authtoken.entity';
 import { Employee } from '.prisma/client';
@@ -19,8 +19,8 @@ import {
 export interface AuthenticateUser extends Pick<User, 'email' | 'password'> {}
 
 type EncryptedPasswordComparator = (
-  encryptedPassword: string,
   plainPassword: string,
+  encryptedPassword: string,
 ) => boolean;
 
 type Dependencies = {
@@ -48,8 +48,8 @@ export type AuthenticateUserUseCase = UseCase<
 
 export const AuthenticateUserUseCase: AuthenticateUserUseCase =
   ({
-    passwordComparator = (encrypted, plain) =>
-      bcrypt.compareSync(encrypted, plain),
+    passwordComparator = (plain, encrypted) =>
+      bcrypt.compareSync(plain, encrypted),
     userRepository,
     tokenRepository,
     employeeRepository,
@@ -64,7 +64,7 @@ export const AuthenticateUserUseCase: AuthenticateUserUseCase =
       return left(new InvalidUserError('User not exists'));
     }
 
-    if (!passwordComparator(userOrError.value.password, plainPassword)) {
+    if (!passwordComparator(plainPassword, userOrError.value.password)) {
       return left(new WrongPasswordError('Wrong password'));
     }
 

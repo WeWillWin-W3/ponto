@@ -11,7 +11,10 @@ import { Either, fromPromise } from 'src/core/logic/Either';
 export function PrismaGenericRepositoryFactory<T>(
   entityName: Prisma.ModelName,
 ): ClassType<GenericRepository<T>> {
-  const prismaDelegateName = entityName.toLowerCase();
+  const [firstLetter, ...entityNameRest] = entityName;
+  const prismaDelegateName = firstLetter
+    .toLowerCase()
+    .concat(...entityNameRest);
   @Injectable()
   class PrismaGenericRepository<T> implements GenericRepository<T> {
     constructor(private prisma: PrismaService) {}

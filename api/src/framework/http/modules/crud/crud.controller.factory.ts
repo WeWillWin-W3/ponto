@@ -37,18 +37,15 @@ type CrudControllerAction =
   | 'deleteOne'
   | 'update';
 
-type NestMethodDecorator = (path?: string | string[]) => MethodDecorator;
-
-const controllerDecoratorByAction: Record<
-  CrudControllerAction,
-  NestMethodDecorator
-> = {
-  create: Post,
-  getOne: Get,
-  getAll: Get,
-  deleteOne: Delete,
-  update: Put,
-};
+const controllerDecoratorByAction = (
+  primaryKeyRoute: string,
+): Record<CrudControllerAction, MethodDecorator> => ({
+  create: Post(),
+  getOne: Get(primaryKeyRoute),
+  getAll: Get(),
+  deleteOne: Delete(primaryKeyRoute),
+  update: Put(primaryKeyRoute),
+});
 
 type CrudControllerDependencies<T> = {
   genericRepository: GenericRepository<T>;
@@ -133,6 +130,13 @@ export function CrudControllerFactory<T, C, U>({
       return result.value;
     }
 
+    @Get()
+    @UseGuards(userRoleGuard)
+    async getAll() {
+      const result = await this.genericRepository.getAll();
+      return result.value;
+    }
+
     @Get(primaryKeyRoute)
     @UseGuards(userRoleGuard)
     async getOne(
@@ -141,13 +145,6 @@ export function CrudControllerFactory<T, C, U>({
     ) {
       const query = { [primaryKey]: pk } as Partial<T>;
       const result = await this.genericRepository.getOne(query);
-      return result.value;
-    }
-
-    @Get()
-    @UseGuards(userRoleGuard)
-    async getAll() {
-      const result = await this.genericRepository.getAll();
       return result.value;
     }
 
@@ -196,11 +193,19 @@ export function CrudControllerFactory<T, C, U>({
 
       CrudController.prototype[actionName] = action;
 
+      Reflect.defineMetadata(
+        '__routeArguments__',
+        {},
+        CrudController.prototype.constructor,
+        actionName,
+      );
+
       RequestDecorator()(CrudController.prototype, actionName, 0);
       ResponseDecorator()(CrudController.prototype, actionName, 1);
 
-      const controllerDecorator = controllerDecoratorByAction[actionName];
-      controllerDecorator()(CrudController, actionName, { value: action });
+      const controllerDecorator =
+        controllerDecoratorByAction(primaryKeyRoute)[actionName];
+      controllerDecorator(CrudController, actionName, { value: action });
     },
   );
 

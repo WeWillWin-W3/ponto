@@ -1,4 +1,9 @@
-import { AttendanceCorrectionRequest, Employee, User } from '@prisma/client';
+import {
+  Attendance,
+  AttendanceCorrectionRequest,
+  Employee,
+  User,
+} from '@prisma/client';
 import { Module } from '@nestjs/common';
 import { PrismaGenericRepositoryFactory } from 'src/framework/data-providers/generic.prisma.repository';
 import { AttendanceController } from './attendance.controller';
@@ -12,7 +17,7 @@ import { ConfigModule } from '@nestjs/config';
     PrismaService,
     {
       provide: 'AttendanceRepository',
-      useClass: PrismaGenericRepositoryFactory<User>('User'),
+      useClass: PrismaGenericRepositoryFactory<Attendance>('Attendance'),
     },
     {
       provide: 'AttendanceCorrectionRepository',

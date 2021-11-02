@@ -48,7 +48,7 @@ export const GetAttendanceUseCase: GetAttendanceUseCase =
     const attendancesWithCorrectionsLeftIndex =
       attendancesWithCorrectionsOrError.findIndex((result) => isLeft(result));
 
-    if (attendancesWithCorrectionsLeftIndex) {
+    if (attendancesWithCorrectionsLeftIndex !== -1) {
       return attendancesWithCorrectionsOrError[
         attendancesWithCorrectionsLeftIndex
       ];
@@ -76,13 +76,12 @@ const getAttendanceWithCorrectionsFactory =
       return attendanceCorrectionsOrError;
     }
 
-    // TODO: Add "createdAt" in AttendanceCorrectionRequest model
-    // Compare id's to determine which one is latest
     const latestAcceptedAttendanceCorrection =
       attendanceCorrectionsOrError.value.reduce(
         (latestAccepted, current) =>
-          latestAccepted === undefined ||
-          (current.accepted && current.id > latestAccepted.id)
+          current.accepted &&
+          (latestAccepted === undefined ||
+            current.created_at > latestAccepted.created_at)
             ? current
             : latestAccepted,
         undefined,
