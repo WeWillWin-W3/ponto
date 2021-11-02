@@ -3,7 +3,7 @@ info:
   description: |
     ## Visão geral
 
-    Só os brabos on
+    Aplicação para registro de ponto e monitoramento de jornadas de trabalho. Trabalho da disciplina de Computação Distribuída, turma P01-2021 da UFMS
   version: 1.0.0
   title: W3 Ponto
   contact:
@@ -22,13 +22,77 @@ servers:
           - "localhost"
         default: "localhost"
 tags:
+  - name: login
   - name: user
   - name: company
   - name: attendance
   - name: employee
   - name: workschedule
 paths:
-  /user:
+  /login:
+    post:
+      operationId: "login"
+      tags:
+        - "login"
+      summary: "Realizar autenticação"
+      description: ""
+      security: []
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/Login"
+      responses:
+        "200":
+          description: "Operação bem sucedida"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/LoginToken"
+        "422":
+          description: "Não foi possível processar os dados informados"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+        "500":
+          description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+  /login/set_company:
+    post:
+      operationId: "setCompany"
+      tags:
+        - "login"
+      summary: "Selecionar empresa"
+      description: ""
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/SetCompany"
+      responses:
+        "201":
+          description: "Operação bem sucedida"
+          content:
+            "text/plain":
+              schema:
+                type: string
+        "422":
+          description: "Não foi possível processar os dados informados"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+        "500":
+          description: "Erro interno"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ResponseError"
+  /users:
     get:
       operationId: "getUsers"
       tags:
@@ -84,7 +148,7 @@ paths:
             "application/json":
               schema:
                 $ref: "#/components/schemas/ResponseError"
-  /user/{id}:
+  /users/{id}:
     get:
       operationId: "getUser"
       tags:
@@ -204,7 +268,7 @@ paths:
             "application/json":
               schema:
                 $ref: "#/components/schemas/ResponseError"
-  /company:
+  /companies:
     get:
       operationId: "getCompanies"
       tags:
@@ -268,7 +332,7 @@ paths:
             "application/json":
               schema:
                 $ref: "#/components/schemas/ResponseError"
-  /company/{id}:
+  /companies/{id}:
     get:
       operationId: "getCompany"
       tags:
@@ -378,7 +442,7 @@ paths:
             "application/json":
               schema:
                 $ref: "#/components/schemas/ResponseError"
-  /employee:
+  /employees:
     get:
       operationId: "getEmployees"
       tags:
@@ -436,7 +500,7 @@ paths:
             "application/json":
               schema:
                 $ref: "#/components/schemas/ResponseError"
-  /employee/{id}:
+  /employees/{id}:
     get:
       operationId: "getEmployee"
       tags:
@@ -1351,6 +1415,43 @@ components:
         error:
           enum:
             - unauthorized-error
+    Login:
+      type: object
+      description: ""
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        email: "olucasmoro@gmail.com"
+        password: "123456"
+    LoginToken:
+      type: object
+      description: ""
+      required:
+        - token
+        - userAvailableCompanies
+      properties:
+        token:
+          type: string
+        userAvailableCompanies:
+          type: array
+          items:
+            type: integer
+    SetCompany:
+      type: object
+      description: ""
+      required:
+        - company
+      properties:
+        company:
+          type: integer
+      example:
+        company: 1
     CreateCompany:
       type: object
       description: ""
