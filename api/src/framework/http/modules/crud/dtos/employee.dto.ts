@@ -1,10 +1,7 @@
 import { Employee } from '@prisma/client';
-import { IsString, IsNumber } from 'class-validator';
+import { IsNumber, IsOptional } from 'class-validator';
 
 export class CreateEmployeeDto implements Partial<Employee> {
-  @IsString()
-  name: string;
-
   @IsNumber()
   user: number;
 
@@ -13,6 +10,7 @@ export class CreateEmployeeDto implements Partial<Employee> {
 }
 
 export class UpdateEmployeeDto implements Partial<Employee> {
-  @IsString()
-  name: string;
+  @IsOptional()
+  @IsNumber()
+  user: number;
 }

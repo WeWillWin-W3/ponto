@@ -5,6 +5,7 @@ import {
   UpdateAttendanceDto,
 } from './dtos/attendance.dto';
 import { CreateEmployeeDto, UpdateEmployeeDto } from './dtos/employee.dto';
+import { CreateUserDto, UpdateUserDto } from './dtos/user.dto';
 
 export const CrudModule = CrudModuleFactory([
   CrudModuleController({
@@ -20,12 +21,20 @@ export const CrudModule = CrudModuleFactory([
     primaryKey: 'id',
     primaryKeyTransformer: numberTransformer,
     entityName: 'User',
-    CreateDto: CreateEmployeeDto,
-    UpdateDto: UpdateEmployeeDto,
+    CreateDto: CreateUserDto,
+    UpdateDto: UpdateUserDto,
     customActions: {
       create: (deps) => async (req, res) => {
+        const { genericRepository } = deps;
+        const result = await genericRepository.getAll();
+
+        console.log(result.value);
+
         return res.json({ message: 'Aqui vai um useCase customizado' });
       },
+    },
+    authorizationLevel: {
+      getAll: 'admin',
     },
   }),
   CrudModuleController({
