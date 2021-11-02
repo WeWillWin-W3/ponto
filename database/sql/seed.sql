@@ -1,10 +1,10 @@
 INSERT INTO 
     "User" ("id", "email", "password", "name", "user_role")
 VALUES 
-    (1, 'jorge.dullius.19@gmail.com', '123456', 'Jorge Dullius', 'admin'),
-    (2, 'eu@llbarbosas.dev', '123456', 'Lucas Barbosa', 'basic'),
-    (3, 'carloseduardo.diasgiacomini@gmail.com', '123456', 'Carlos Giacomini', 'basic'),
-    (4, 'olucasmoro@gmail.com', '123456', 'Lucas Moro', 'manager');
+    (1, 'jorge.dullius.19@gmail.com', '$2b$04$f1mxXumrK0eqKBTybvk4reDxDhHkEdS8.2ZbudTJL6LlycJgIeUvK', 'Jorge Dullius', 'admin'),
+    (2, 'eu@llbarbosas.dev', '$2b$04$pEmj17ECtA1OxGzF.P3kNO92dAlpcJkSv3MMVmHKMus5qaP8.AUmC', 'Lucas Barbosa', 'basic'),
+    (3, 'carloseduardo.diasgiacomini@gmail.com', '$2b$04$R6PcHWO9xUZf.lBENjTYme9bgoPPYyyE/8yDZgwQtA5323t4MiBUe', 'Carlos Giacomini', 'basic'),
+    (4, 'olucasmoro@gmail.com', '$2b$04$dJYHgJsvSLV1SeWCo3StrOSHV5wLMOUGFWqorjb4wJnWIZMlzxF8i', 'Lucas Moro', 'manager');
 
 SELECT setval('"User_id_seq"', 4);
 

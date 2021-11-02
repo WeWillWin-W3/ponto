@@ -25,6 +25,7 @@ model AttendanceCorrectionRequest {
   attester    Int?
   accepted    Boolean?
   description String?     @db.VarChar
+  created_at  DateTime    @default(now()) @db.Timestamp(6)
   Attendance  Attendance? @relation(fields: [attendance], references: [id], onDelete: NoAction, onUpdate: NoAction)
   User        User?       @relation(fields: [attester], references: [id], onUpdate: NoAction)
 }

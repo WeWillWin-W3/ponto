@@ -27,7 +27,8 @@ CREATE TABLE "AttendanceCorrectionRequest" (
   "attendance" int,
   "attester" int,
   "accepted" boolean,
-  "description" varchar
+  "description" varchar,
+  "created_at" timestamp NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "OvertimeWorkApproval" (
